@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | CV SCREEN AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #07111f;
+            --sidebar: #091525;
+            --card: #0d1b2d;
+            --card-light: #12243a;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f4f7fb;
+            --muted: #91a2b7;
+            --blue: #087cff;
+            --cyan: #00c8ff;
+            --green: #20d889;
+            --orange: #ffae42;
+            --red: #ff5c70;
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.22);
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #091727 0%, #07111f 100%);
+            border-right: 1px solid var(--border);
+            padding: 28px 16px;
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: white;
+            font-weight: 800;
+            font-size: 18px;
+            box-shadow: 0 8px 25px rgba(0, 140, 255, 0.25);
+        }
+
+        .brand-text h2 {
+            font-size: 18px;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-text p {
+            color: var(--muted);
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            margin-top: 4px;
+        }
+
+        .menu-title {
+            color: #64758a;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin: 28px 12px 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            margin-bottom: 6px;
+            border-radius: 10px;
+            color: #9cacc0;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(8, 124, 255, 0.10);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(
+                90deg,
+                rgba(8, 124, 255, 0.20),
+                rgba(0, 200, 255, 0.08)
+            );
+            color: white;
+            border-left: 3px solid var(--cyan);
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .logout {
+            position: absolute;
+            left: 16px;
+            right: 16px;
+            bottom: 24px;
+            color: #ff7180;
+        }
+
+        .logout:hover {
+            background: rgba(255, 92, 112, 0.10);
+            color: #ff8a96;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 78px;
+            padding: 0 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(7, 17, 31, 0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1268cf, #00a9d9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .user-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .user-info span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .content {
+            padding: 32px 35px 50px;
+        }
+
+        /* =========================
+           WELCOME
+        ========================= */
+
+        .welcome {
+            background:
+                radial-gradient(circle at 85% 30%, rgba(0, 200, 255, 0.16), transparent 28%),
+                linear-gradient(135deg, #0d2239, #0b1729);
+            border: 1px solid rgba(0, 200, 255, 0.10);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome::after {
+            content: "";
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            border: 1px solid rgba(0, 200, 255, 0.08);
+            border-radius: 50%;
+            right: -80px;
+            top: -90px;
+        }
+
+        .welcome h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            font-size: 14px;
+            max-width: 650px;
+        }
+
+        .engine-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 18px;
+            padding: 8px 13px;
+            border-radius: 20px;
+            background: rgba(32, 216, 137, 0.08);
+            border: 1px solid rgba(32, 216, 137, 0.18);
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px rgba(32, 216, 137, 0.7);
+        }
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 21px;
+            box-shadow: var(--shadow);
+            transition: 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 200, 255, 0.20);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 124, 255, 0.10);
+            color: var(--cyan);
+            font-size: 16px;
+        }
+
+        .stat-value {
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .stat-description {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 7px;
+        }
+
+        /* =========================
+           SECTION GRID
+        ========================= */
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .card-link {
+            color: var(--cyan);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .card-link:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           PERFORMANCE
+        ========================= */
+
+        .performance-item {
+            margin-bottom: 20px;
+        }
+
+        .performance-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .performance-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .performance-label span:first-child {
+            color: #aab8c9;
+        }
+
+        .performance-value {
+            font-weight: 700;
+        }
+
+        .progress {
+            height: 7px;
+            background: #18283b;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: var(--progress, 0%);
+            max-width: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--blue), var(--cyan));
+        }
+
+        .progress-green {
+            background: linear-gradient(90deg, #0cae69, var(--green));
+        }
+
+        .progress-orange {
+            background: linear-gradient(90deg, #e17d19, var(--orange));
+        }
+
+        /* =========================
+           INSIGHTS
+        ========================= */
+
+        .insight {
+            padding: 15px;
+            border-radius: 11px;
+            background: #0a1727;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .insight:last-child {
+            margin-bottom: 0;
+        }
+
+        .insight-label {
+            color: var(--muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .insight-value {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .insight-value.green {
+            color: var(--green);
+        }
+
+        .insight-value.blue {
+            color: var(--cyan);
+        }
+
+        .insight-value.orange {
+            color: var(--orange);
+        }
+
+        .recommendation {
+            line-height: 1.6;
+            color: #aab8c9;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        /* =========================
+           CANDIDATES
+        ========================= */
+
+        .candidate-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .candidate-row {
+            display: grid;
+            grid-template-columns: 45px 1.4fr 1fr 90px 90px;
+            align-items: center;
+            gap: 15px;
+            padding: 14px;
+            border-radius: 11px;
+            background: #0a1727;
+            border: 1px solid var(--border);
+            transition: 0.2s ease;
+        }
+
+        .candidate-row:hover {
+            border-color: rgba(0, 200, 255, 0.18);
+            background: #0c1b2e;
+        }
+
+        .candidate-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1469c7, #00a8d7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        .candidate-name {
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .candidate-email {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .position {
+            color: #b8c6d6;
+            font-size: 11px;
+        }
+
+        .match-score {
+            color: var(--green);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .status {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 6px 8px;
+            border-radius: 15px;
+            font-size: 9px;
+            font-weight: 700;
+            background: rgba(32, 216, 137, 0.09);
+            color: var(--green);
+            white-space: nowrap;
+        }
+
+        .status.pending {
+            background: rgba(255, 174, 66, 0.10);
+            color: var(--orange);
+        }
+
+        .status.failed {
+            background: rgba(255, 92, 112, 0.10);
+            color: var(--red);
+        }
+
+        /* =========================
+           JOBS
+        ========================= */
+
+        .jobs-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .job-row {
+            padding: 16px;
+            background: #0a1727;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+        }
+
+        .job-main {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .job-title {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .job-department {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .job-status {
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 13px;
+        }
+
+        .job-tag {
+            background: #122338;
+            color: #9fb0c4;
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 9px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 25px 15px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* =========================
+           SYSTEM HEALTH
+        ========================= */
+
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .health-item {
+            padding: 16px;
+            background: #0a1727;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .health-name {
+            color: #a9b7c8;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .health-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .health-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(32, 216, 137, 0.6);
+        }
+
+        /* =========================
+           QUICK ACTIONS
+        ========================= */
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .quick-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #0a1727;
+            border: 1px solid var(--border);
+            color: #b7c5d5;
+            font-size: 11px;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .quick-action:hover {
+            color: white;
+            border-color: rgba(0, 200, 255, 0.25);
+            background: #0d2034;
+            transform: translateY(-1px);
+        }
+
+        .quick-action.primary {
+            background: linear-gradient(
+                135deg,
+                rgba(8, 124, 255, 0.18),
+                rgba(0, 200, 255, 0.08)
+            );
+            color: var(--cyan);
+            border-color: rgba(0, 200, 255, 0.16);
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .health-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 75px;
+                padding: 20px 10px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .brand-text,
+            .menu-title,
+            .nav-item span:not(.nav-icon) {
+                display: none;
+            }
+
+            .nav-item {
+                justify-content: center;
+                padding: 13px 8px;
+            }
+
+            .logout {
+                left: 10px;
+                right: 10px;
+            }
+
+            .main {
+                margin-left: 75px;
+            }
+
+            .candidate-row {
+                grid-template-columns: 45px 1fr 90px;
+            }
+
+            .candidate-row .position,
+            .candidate-row .candidate-status {
+                display: none;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .content {
+                padding: 22px 16px 40px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome h1 {
+                font-size: 22px;
+            }
+
+            .health-grid,
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .candidate-row {
+                grid-template-columns: 40px 1fr 75px;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+    <aside class="sidebar">
+
+        <a href="/dashboard" class="brand">
+            <div class="brand-icon">AI</div>
+
+            <div class="brand-text">
+                <h2>CV SCREEN</h2>
+                <p>RECRUITMENT INTELLIGENCE</p>
+            </div>
+        </a>
+
+        <div class="menu-title">Main Menu</div>
+
+        <a href="/dashboard" class="nav-item active">
+            <span class="nav-icon">▦</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/candidates" class="nav-item">
+            <span class="nav-icon">◉</span>
+            <span>Candidates</span>
+        </a>
+
+        <a href="/jobs" class="nav-item">
+            <span class="nav-icon">▣</span>
+            <span>Jobs</span>
+        </a>
+
+        <a href="/screening" class="nav-item">
+            <span class="nav-icon">⌕</span>
+            <span>AI Screening</span>
+        </a>
+
+        <a href="/reports" class="nav-item">
+            <span class="nav-icon">▤</span>
+            <span>Reports</span>
+        </a>
+
+        <div class="menu-title">System</div>
+
+        <a href="/settings" class="nav-item">
+            <span class="nav-icon">⚙</span>
+            <span>Settings</span>
+        </a>
+
+        <a href="/logout" class="nav-item logout">
+            <span class="nav-icon">↪</span>
+            <span>Logout</span>
+        </a>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <div class="page-title">Recruitment Intelligence</div>
+                <div class="page-subtitle">
+                    AI-powered recruitment and candidate screening
+                </div>
+            </div>
+
+            <div class="user-area">
+
+                <div class="user-avatar">
+                    AD
+                </div>
+
+                <div class="user-info">
+                    <strong>Administrator</strong>
+                    <span>System Admin</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+            <!-- =========================
+                 WELCOME BANNER
+            ========================== -->
+            <div class="welcome">
+
+                <h1>
+                    Good day, Administrator 👋
+                </h1>
+
+                <p>
+                    Monitor your recruitment pipeline and AI-powered
+                    candidate screening from one place.
+                </p>
+
+                <div class="engine-status">
+                    <span class="status-dot"></span>
+                    AI Recruitment Engine Active
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 STATISTICS
+            ========================== -->
+            <div class="stats-grid">
+
+                <!-- CVs -->
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            CVs Uploaded
+                        </span>
+
+                        <div class="stat-icon">
+                            ▤
+                        </div>
+                    </div>
+
+                    <div class="stat-value">
+                        {{ stats.cv_uploaded|default(0, true) }}
+                    </div>
+
+                    <div class="stat-description">
+                        CV documents stored in system
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIVE JOBS -->
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Active Jobs
+                        </span>
+
+                        <div class="stat-icon">
+                            ▣
+                        </div>
+                    </div>
+
+                    <div class="stat-value">
+                        {{ stats.active_jobs|default(0, true) }}
+                    </div>
+
+                    <div class="stat-description">
+                        Currently accepting applications
+                    </div>
+
+                </div>
+
+
+                <!-- SCREENED -->
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Candidates Screened
+                        </span>
+
+                        <div class="stat-icon">
+                            ⌕
+                        </div>
+                    </div>
+
+                    <div class="stat-value">
+                        {{ stats.screened_candidates|default(0, true) }}
+                    </div>
+
+                    <div class="stat-description">
+                        Profiles processed by AI
+                    </div>
+
+                </div>
+
+
+                <!-- AVERAGE MATCH -->
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span class="stat-label">
+                            Average Match
+                        </span>
+
+                        <div class="stat-icon">
+                            ★
+                        </div>
+                    </div>
+
+                    <div class="stat-value">
+                        {{ stats.average_match|default(0, true)|round|int }}%
+                    </div>
+
+                    <div class="stat-description">
+                        Average candidate-job compatibility
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 PERFORMANCE + INSIGHTS
+            ========================== -->
+            <div class="two-column">
+
+                <!-- SCREENING PERFORMANCE -->
+                <div class="card">
+
+                    <div class="card-header">
+                        <div class="card-title">
+                            Screening Performance
+                        </div>
+
+                        <a href="/reports" class="card-link">
+                            View Reports
+                        </a>
+                    </div>
+
+
+                    <!-- REQUIREMENTS MET -->
+                    <div class="performance-item">
+
+                        <div class="performance-label">
+                            <span>Requirements Met</span>
+
+                            <span class="performance-value">
+                                {{ stats.requirements_met|default(0, true)|round|int }}%
+                            </span>
+                        </div>
+
+                        <div class="progress">
+                            <div
+                                class="progress-bar progress-green"
+                                style="--progress: {{ stats.requirements_met|default(0, true)|float }}%;"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- AI ACCURACY -->
+                    <div class="performance-item">
+
+                        <div class="performance-label">
+                            <span>AI Match Score</span>
+
+                            <span class="performance-value">
+                                {{ stats.average_match|default(0, true)|round|int }}%
+                            </span>
+                        </div>
+
+                        <div class="progress">
+                            <div
+                                class="progress-bar"
+                                style="--progress: {{ stats.average_match|default(0, true)|float }}%;"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- SHORTLISTED -->
+                    {% set screened_count = stats.screened_candidates|default(0, true)|float %}
+                    {% set shortlisted_count = stats.shortlisted_candidates|default(0, true)|float %}
+                    {% set shortlist_rate = ((shortlisted_count / screened_count) * 100) if screened_count > 0 else 0 %}
+
+                    <div class="performance-item">
+
+                        <div class="performance-label">
+                            <span>Shortlisted Candidates</span>
+
+                            <span class="performance-value">
+                                {{ stats.shortlisted_candidates|default(0, true)|int }}
+                            </span>
+                        </div>
+
+                        <div class="progress">
+                            <div
+                                class="progress-bar progress-orange"
+                                style="--progress: {{ shortlist_rate|float }}%;"
+                            ></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AI INSIGHTS -->
+                <div class="card">
+
+                    <div class="card-header">
+                        <div class="card-title">
+                            AI Screening Insights
+                        </div>
+                    </div>
+
+
+                    <div class="insight">
+
+                        <div class="insight-label">
+                            Most Detected Skill
+                        </div>
+
+                        <div class="insight-value blue">
+                            {{ stats.most_detected_skill|default("No skill data yet", true) }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="insight">
+
+                        <div class="insight-label">
+                            Screening Status
+                        </div>
+
+                        <div class="insight-value green">
+                            AI engine ready
+                        </div>
+
+                    </div>
+
+
+                    <div class="insight">
+
+                        <div class="insight-label">
+                            Recommendation
+                        </div>
+
+                        <div class="recommendation">
+                            Review high-match candidates and compare
+                            their extracted skills before making
+                            recruitment decisions.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 TOP MATCHING CANDIDATES
+            ========================== -->
+            <div class="card" style="margin-bottom: 20px;">
+
+                <div class="card-header">
+
+                    <div class="card-title">
+                        Top Matching Candidates
+                    </div>
+
+                    <a href="/candidates" class="card-link">
+                        View All Candidates
+                    </a>
+
+                </div>
+
+
+                {% if candidates %}
+
+                <div class="candidate-list">
+
+                    {% for candidate in candidates %}
+
+                    {% if loop.index <= 5 %}
+
+                    {% set candidate_name = candidate.full_name|default("Candidate", true) %}
+
+                    <div class="candidate-row">
+
+                        <!-- AVATAR -->
+                        <div class="candidate-avatar">
+                            {% set name_parts = candidate_name.split() %}
+
+                            {% if name_parts|length >= 2 %}
+                                {{ name_parts[0][0]|upper }}{{ name_parts[1][0]|upper }}
+                            {% else %}
+                                {{ candidate_name[:2]|upper }}
+                            {% endif %}
+                        </div>
+
+
+                        <!-- CANDIDATE -->
+                        <div>
+
+                            <div class="candidate-name">
+                                {{ candidate_name }}
+                            </div>
+
+                            <div class="candidate-email">
+                                {{ candidate.email|default("Email not available", true) }}
+                            </div>
+
+                        </div>
+
+
+                        <!-- POSITION -->
+                        <div class="position">
+                            {{ candidate.target_position|default("Position not specified", true) }}
+                        </div>
+
+
+                        <!-- MATCH -->
+                        <div class="match-score">
+                            {{ candidate.match_score|default(0, true)|round(2) }}%
+                        </div>
+
+
+                        <!-- STATUS -->
+                        <div class="candidate-status">
+
+                            {% set candidate_status = candidate.status|default("Pending", true) %}
+
+                            {% if candidate_status|lower in ["screened", "shortlisted", "selected"] %}
+
+                                <span class="status">
+                                    {{ candidate_status }}
+                                </span>
+
+                            {% elif candidate_status|lower in ["failed", "rejected"] %}
+
+                                <span class="status failed">
+                                    {{ candidate_status }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="status pending">
+                                    {{ candidate_status }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+                    No screened candidates are available yet.
+                    Upload a CV to begin AI screening.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =========================
+                 ACTIVE JOB VACANCIES
+            ========================== -->
+            <div class="card" style="margin-bottom: 20px;">
+
+                <div class="card-header">
+
+                    <div class="card-title">
+                        Active Job Vacancies
+                    </div>
+
+                    <a href="/jobs" class="card-link">
+                        Manage Jobs
+                    </a>
+
+                </div>
+
+
+                {% if jobs %}
+
+                <div class="jobs-list">
+
+                    {% for job in jobs %}
+
+                    <div class="job-row">
+
+                        <div class="job-main">
+
+                            <div>
+                                <div class="job-title">
+                                    {{ job.job_title|default("Untitled Position", true) }}
+                                </div>
+
+                                <div class="job-department">
+                                    {{ job.department|default("Department not specified", true) }}
+                                </div>
+                            </div>
+
+                            <div class="job-status">
+                                ● {{ job.status|default("Active", true) }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="job-meta">
+
+                            {% if job.employment_type %}
+                            <span class="job-tag">
+                                {{ job.employment_type }}
+                            </span>
+                            {% endif %}
+
+                            {% if job.experience_required %}
+                            <span class="job-tag">
+                                {{ job.experience_required }}
+                            </span>
+                            {% endif %}
+
+                            {% if job.location %}
+                            <span class="job-tag">
+                                📍 {{ job.location }}
+                            </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+                    No active jobs available.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =========================
+                 SYSTEM HEALTH
+            ========================== -->
+            <div class="card" style="margin-bottom: 20px;">
+
+                <div class="card-header">
+                    <div class="card-title">
+                        System Health
+                    </div>
+                </div>
+
+
+                <div class="health-grid">
+
+                    <div class="health-item">
+
+                        <div class="health-name">
+                            Database Connection
+                        </div>
+
+                        <div class="health-status">
+                            <span class="health-dot"></span>
+                            Operational
+                        </div>
+
+                    </div>
+
+
+                    <div class="health-item">
+
+                        <div class="health-name">
+                            AI Screening Engine
+                        </div>
+
+                        <div class="health-status">
+                            <span class="health-dot"></span>
+                            Ready
+                        </div>
+
+                    </div>
+
+
+                    <div class="health-item">
+
+                        <div class="health-name">
+                            CV Processing
+                        </div>
+
+                        <div class="health-status">
+                            <span class="health-dot"></span>
+                            Operational
+                        </div>
+
+                    </div>
+
+
+                    <div class="health-item">
+
+                        <div class="health-name">
+                            Application Server
+                        </div>
+
+                        <div class="health-status">
+                            <span class="health-dot"></span>
+                            Running
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 QUICK ACTIONS
+            ========================== -->
+            <div class="card">
+
+                <div class="card-header">
+                    <div class="card-title">
+                        Quick Actions
+                    </div>
+                </div>
+
+
+                <div class="quick-actions">
+
+                    <a href="/upload-cv" class="quick-action primary">
+                        <span>＋</span>
+                        Upload CV
+                    </a>
+
+                    <a href="/jobs" class="quick-action">
+                        <span>＋</span>
+                        Create Job
+                    </a>
+
+                    <a href="/screening" class="quick-action">
+                        <span>▶</span>
+                        Run Screening
+                    </a>
+
+                    <a href="/reports" class="quick-action">
+                        <span>▤</span>
+                        Generate Report
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

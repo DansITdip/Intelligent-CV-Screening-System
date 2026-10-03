@@ -1,0 +1,10 @@
+cat .gitignore
+
+venv/
+__pycache__/
+*.pyc
+uploads/
+.env
+*.db
+*.sqlite
+*.sqlite3

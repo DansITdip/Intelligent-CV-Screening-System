@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screening Results | AI CV Screening</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #07111f;
+            color: #e8f0f8;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #0a1627;
+            border-right: 1px solid #1c3048;
+            padding: 25px 16px;
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px 30px;
+            border-bottom: 1px solid #1c3048;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #1479ff, #00c6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .brand h2 {
+            font-size: 17px;
+            letter-spacing: .5px;
+        }
+
+        .brand span {
+            display: block;
+            color: #00c6ff;
+            font-size: 10px;
+            margin-top: 3px;
+            letter-spacing: 1.5px;
+        }
+
+        .menu-title {
+            color: #60758d;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 25px 12px 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            color: #91a5ba;
+            text-decoration: none;
+            border-radius: 9px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .nav-link:hover {
+            background: #10243a;
+            color: white;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(90deg, #123e69, #0e2c4b);
+            color: #ffffff;
+            border-left: 3px solid #00c6ff;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .system-status {
+            position: absolute;
+            bottom: 22px;
+            left: 16px;
+            right: 16px;
+            padding: 14px;
+            background: #0d2034;
+            border: 1px solid #1b3b55;
+            border-radius: 10px;
+        }
+
+        .status-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #a8b8c8;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #22c55e;
+        }
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 72px;
+            padding: 0 32px;
+            border-bottom: 1px solid #1c3048;
+            background: #081523;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .breadcrumb {
+            color: #71869c;
+            font-size: 12px;
+        }
+
+        .breadcrumb strong {
+            color: #dce8f3;
+            font-weight: 500;
+        }
+
+        .admin-area {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .notification {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #20384f;
+            border-radius: 9px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #9eb0c1;
+            position: relative;
+        }
+
+        .notification::after {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background: #00c6ff;
+            border-radius: 50%;
+            position: absolute;
+            top: 7px;
+            right: 7px;
+        }
+
+        .admin {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #176eff, #00bcd4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .admin-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .admin-info span {
+            color: #6f8498;
+            font-size: 11px;
+        }
+
+        .content {
+            padding: 32px;
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+            gap: 20px;
+        }
+
+        .eyebrow {
+            color: #00c6ff;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .page-header p {
+            color: #8095aa;
+            font-size: 13px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button,
+        .button {
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 8px;
+            padding: 11px 17px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1678ff, #0068d9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: .9;
+        }
+
+        .btn-secondary {
+            background: #102337;
+            border: 1px solid #23405a;
+            color: #c7d5e2;
+        }
+
+        .candidate-summary {
+            background: linear-gradient(135deg, #0c1e32, #0a1829);
+            border: 1px solid #1c3850;
+            border-radius: 13px;
+            padding: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 22px;
+        }
+
+        .candidate-left {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+        }
+
+        .candidate-avatar {
+            width: 62px;
+            height: 62px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #176eff, #00bcd4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .candidate-details h2 {
+            font-size: 19px;
+            margin-bottom: 5px;
+        }
+
+        .candidate-details p {
+            color: #7f95a9;
+            font-size: 13px;
+        }
+
+        .candidate-meta {
+            display: flex;
+            gap: 18px;
+            margin-top: 9px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            color: #9db0c2;
+            font-size: 11px;
+        }
+
+        .meta-item strong {
+            color: #e1ebf4;
+        }
+
+        .score-box {
+            min-width: 160px;
+            text-align: center;
+            padding: 15px 20px;
+            border: 1px solid #21556d;
+            background: #0b2636;
+            border-radius: 12px;
+        }
+
+        .score-label {
+            color: #7994a8;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score {
+            color: #27d17f;
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin: 4px 0;
+        }
+
+        .score-status {
+            color: #27d17f;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.55fr .85fr;
+            gap: 22px;
+        }
+
+        .card {
+            background: #0b1929;
+            border: 1px solid #1b3248;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .card-subtitle {
+            color: #71869b;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .ai-badge {
+            color: #00c6ff;
+            background: #09283b;
+            border: 1px solid #13516a;
+            padding: 6px 9px;
+            border-radius: 6px;
+            font-size: 9px;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .match-item {
+            margin-bottom: 21px;
+        }
+
+        .match-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .match-name {
+            font-size: 12px;
+            color: #c5d3df;
+        }
+
+        .match-percent {
+            font-size: 12px;
+            font-weight: 700;
+            color: #27d17f;
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #16283a;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            border-radius: 20px;
+            background: linear-gradient(90deg, #087cff, #00c6ff);
+            transition: width 0.8s ease;
+        }
+
+        .progress-bar.green {
+            background: linear-gradient(90deg, #16a66a, #27d17f);
+        }
+
+        .match-note {
+            color: #657b90;
+            font-size: 10px;
+            margin-top: 6px;
+        }
+
+        .skill-section {
+            margin-bottom: 22px;
+        }
+
+        .skill-section h4 {
+            font-size: 12px;
+            color: #b8c8d6;
+            margin-bottom: 12px;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill {
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .skill.matched {
+            background: #0b3026;
+            border: 1px solid #175a45;
+            color: #38d995;
+        }
+
+        .skill.partial {
+            background: #382a0c;
+            border: 1px solid #765a18;
+            color: #f4c75d;
+        }
+
+        .skill.missing {
+            background: #351820;
+            border: 1px solid #71303e;
+            color: #f48a9b;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #0d263a, #0b1e30);
+            border: 1px solid #1e4a63;
+            border-radius: 10px;
+            padding: 17px;
+        }
+
+        .recommendation-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #00c6ff;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .recommendation p {
+            color: #a0b3c4;
+            line-height: 1.7;
+            font-size: 12px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 13px 0;
+            border-bottom: 1px solid #182d41;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric span {
+            color: #8297aa;
+            font-size: 12px;
+        }
+
+        .metric strong {
+            color: #e2ebf2;
+            font-size: 12px;
+        }
+
+        .metric strong.green {
+            color: #27d17f;
+        }
+
+        .job-profile {
+            background: #0d2033;
+            border: 1px solid #1d3850;
+            border-radius: 9px;
+            padding: 15px;
+        }
+
+        .job-profile h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .job-profile p {
+            color: #748a9e;
+            font-size: 11px;
+        }
+
+        .job-tag {
+            display: inline-block;
+            margin-top: 10px;
+            color: #00c6ff;
+            background: #092b3e;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .action-list {
+            display: grid;
+            gap: 9px;
+        }
+
+        .action {
+            width: 100%;
+            padding: 11px;
+            background: #102337;
+            border: 1px solid #203b54;
+            color: #b8c9d8;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 11px;
+            text-align: left;
+        }
+
+        .action:hover {
+            background: #14304a;
+            color: white;
+        }
+
+        .footer {
+            color: #53697d;
+            text-align: center;
+            font-size: 10px;
+            padding: 10px 0 30px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8095aa;
+        }
+
+        .empty-state h2 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: #c5d3df;
+        }
+
+        @media (max-width: 1100px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 72px;
+                padding: 20px 8px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .brand h2,
+            .brand span,
+            .menu-title,
+            .nav-link span,
+            .system-status {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 72px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .candidate-summary {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .score-box {
+                width: 100%;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .admin-info {
+                display: none;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .candidate-left {
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">AI</div>
+            <div>
+                <h2>CV SCREEN</h2>
+                <span>RECRUITMENT INTELLIGENCE</span>
+            </div>
+        </div>
+
+        <div class="menu-title">Workspace</div>
+
+        <a href="/dashboard" class="nav-link">
+            <div class="nav-icon">⌂</div>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/candidates" class="nav-link">
+            <div class="nav-icon">♙</div>
+            <span>Candidates</span>
+        </a>
+
+        <a href="/jobs" class="nav-link">
+            <div class="nav-icon">▣</div>
+            <span>Jobs</span>
+        </a>
+
+        <a href="/upload-cv" class="nav-link active">
+            <div class="nav-icon">◉</div>
+            <span>Screening</span>
+        </a>
+
+        <a href="/reports" class="nav-link">
+            <div class="nav-icon">▤</div>
+            <span>Reports</span>
+        </a>
+
+        <a href="/settings" class="nav-link">
+            <div class="nav-icon">⚙</div>
+            <span>Settings</span>
+        </a>
+
+        <div class="menu-title">Account</div>
+
+        <a href="/logout" class="nav-link">
+            <div class="nav-icon">⇥</div>
+            <span>Logout</span>
+        </a>
+
+        <div class="system-status">
+            <div class="status-line">
+                <div class="status-dot"></div>
+                AI Engine Online
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div class="breadcrumb">
+                Recruitment Intelligence
+                &nbsp;/&nbsp;
+                <strong>Screening Results</strong>
+            </div>
+
+            <div class="admin-area">
+                <div class="notification">♢</div>
+                <div class="admin">
+                    <div class="avatar">AD</div>
+                    <div class="admin-info">
+                        <strong>Admin</strong>
+                        <span>Recruitment Team</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+
+            {% if result and result.candidate and result.overall_score > 0 %}
+
+            <div class="page-header">
+                <div>
+                    <div class="eyebrow">AI Screening Complete</div>
+                    <h1>Candidate Screening Results</h1>
+                    <p>AI-generated analysis of candidate qualifications against the selected job requirements.</p>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="window.print()">⎙ Print</button>
+                    <a href="/reports" class="button btn-primary">View Report</a>
+                </div>
+            </div>
+
+            <!-- CANDIDATE SUMMARY -->
+            <div class="candidate-summary">
+                <div class="candidate-left">
+                    <div class="candidate-avatar">
+                        {{ result.candidate.name[:2]|upper if result.candidate.name else 'NA' }}
+                    </div>
+
+                    <div class="candidate-details">
+                        <h2>{{ result.candidate.name or 'Unknown Candidate' }}</h2>
+                        <p>{{ result.candidate.position or 'Position not specified' }}</p>
+
+                        <div class="candidate-meta">
+                            <div class="meta-item">
+                                Email: <strong>{{ result.candidate.email or 'Not provided' }}</strong>
+                            </div>
+                            <div class="meta-item">
+                                Experience: <strong>{{ result.experience_years or 0 }} Years</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="score-box">
+                    <div class="score-label">Overall Match Score</div>
+                    <div class="score">{{ result.overall_score|round(1) }}%</div>
+                    <div class="score-status">
+                        {% if result.overall_score >= 80 %}
+                            STRONG MATCH
+                        {% elif result.overall_score >= 60 %}
+                            MODERATE MATCH
+                        {% else %}
+                            LOWER MATCH
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid">
+
+                <!-- LEFT COLUMN -->
+                <div>
+
+                    <!-- MATCH ANALYSIS -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">AI Match Analysis</div>
+                                <div class="card-subtitle">Weighted evaluation against job requirements</div>
+                            </div>
+                            <div class="ai-badge">AI ANALYSIS</div>
+                        </div>
+
+                        <!-- Technical Skills -->
+                        <div class="match-item">
+                            <div class="match-top">
+                                <span class="match-name">Technical Skills</span>
+                                <span class="match-percent">{{ result.scores.technical_skills|default(0)|round(1) }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar green" data-width="{{ result.scores.technical_skills|default(0) }}"></div>
+                            </div>
+                            <div class="match-note">Technical skills comparison against job requirements.</div>
+                        </div>
+
+                        <!-- Work Experience -->
+                        <div class="match-item">
+                            <div class="match-top">
+                                <span class="match-name">Work Experience</span>
+                                <span class="match-percent">{{ result.scores.work_experience|default(0)|round(1) }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar green" data-width="{{ result.scores.work_experience|default(0) }}"></div>
+                            </div>
+                            <div class="match-note">Candidate experience evaluated against required level.</div>
+                        </div>
+
+                        <!-- Education -->
+                        <div class="match-item">
+                            <div class="match-top">
+                                <span class="match-name">Education</span>
+                                <span class="match-percent">{{ result.scores.education|default(0)|round(1) }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar green" data-width="{{ result.scores.education|default(0) }}"></div>
+                            </div>
+                            <div class="match-note">Education level compared with job requirements.</div>
+                        </div>
+
+                        <!-- Job Relevance -->
+                        <div class="match-item">
+                            <div class="match-top">
+                                <span class="match-name">Job Relevance</span>
+                                <span class="match-percent">{{ result.scores.job_relevance|default(0)|round(1) }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar green" data-width="{{ result.scores.job_relevance|default(0) }}"></div>
+                            </div>
+                            <div class="match-note">Overall relevance of CV content to the target position.</div>
+                        </div>
+
+                        <div class="recommendation">
+                            <div class="recommendation-title">✦ AI Screening Recommendation</div>
+                            <p>{{ result.recommendation or 'No recommendation available.' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- SKILL ANALYSIS -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Skill Analysis</div>
+                                <div class="card-subtitle">Skills extracted from the candidate CV</div>
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h4>Matched Skills</h4>
+                            <div class="skills">
+                                {% if result.matched_skills %}
+                                    {% for skill in result.matched_skills %}
+                                        <div class="skill matched">{{ skill }}</div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="skill matched">No matched skills detected</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h4>Partially Matched</h4>
+                            <div class="skills">
+                                {% if result.partial_skills %}
+                                    {% for skill in result.partial_skills %}
+                                        <div class="skill partial">{{ skill }}</div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="skill partial">None</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="skill-section">
+                            <h4>Missing / Not Detected</h4>
+                            <div class="skills">
+                                {% if result.missing_skills %}
+                                    {% for skill in result.missing_skills %}
+                                        <div class="skill missing">{{ skill }}</div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="skill missing">None</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Screening Summary</div>
+                                <div class="card-subtitle">AI evaluation metrics</div>
+                            </div>
+                        </div>
+
+                        <div class="metric">
+                            <span>Overall Score</span>
+                            <strong class="green">{{ result.overall_score|default(0)|round(1) }}%</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Skills Match</span>
+                            <strong class="green">{{ result.scores.technical_skills|default(0)|round(1) }}%</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Experience Match</span>
+                            <strong class="green">{{ result.scores.work_experience|default(0)|round(1) }}%</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Education Match</span>
+                            <strong class="green">{{ result.scores.education|default(0)|round(1) }}%</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Processing Time</span>
+                            <strong>{{ result.processing_time or 0 }} sec</strong>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Target Job</div>
+                                <div class="card-subtitle">Matching profile</div>
+                            </div>
+                        </div>
+
+                        <div class="job-profile">
+                            <h3>{{ result.candidate.position or 'Not specified' }}</h3>
+                            <p>Target position from candidate profile</p>
+                            <div class="job-tag">ACTIVE JOB PROFILE</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Screening Decision</div>
+                                <div class="card-subtitle">Candidate workflow status</div>
+                            </div>
+                        </div>
+
+                        <div class="recommendation">
+                            <div class="recommendation-title">
+                                {% if result.overall_score >= 70 %}
+                                    ✓ Recommended for Shortlisting
+                                {% else %}
+                                    Review Required
+                                {% endif %}
+                            </div>
+                            <p>
+                                {% if result.overall_score >= 70 %}
+                                    Match score exceeds the current screening threshold.
+                                    Candidate satisfies the majority of required qualifications.
+                                {% else %}
+                                    Match score is below the preferred threshold.
+                                    Manual review is recommended before proceeding.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Candidate Actions</div>
+                            </div>
+                        </div>
+
+                        <div class="action-list">
+                            <a href="/candidates" class="action">♙ View All Candidates</a>
+                            <a href="/upload-cv" class="action">◉ Screen Another CV</a>
+                            <a href="/reports" class="action">▤ Generate Screening Report</a>
+                            <a href="/dashboard" class="action">← Back to Dashboard</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="empty-state">
+                <h2>No Screening Result Available</h2>
+                <p>
+                    No completed AI screening result was found for this candidate.<br>
+                    Please upload a CV and run screening first.
+                </p>
+                <br>
+                <a href="/upload-cv" class="button btn-primary">Upload CV & Run Screening</a>
+            </div>
+
+            {% endif %}
+
+            <div class="footer">
+                AI CV Screening & Job Matching System · Intelligent Recruitment Platform
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".progress-bar[data-width]").forEach(function (bar) {
+                const width = bar.getAttribute("data-width") || 0;
+                bar.style.width = width + "%";
+            });
+        });
+    </script>
+
+</body>
+</html>
