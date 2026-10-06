@@ -1079,6 +1079,300 @@ def get_candidate(
 
 
 # =========================================================
+# GET STORED JOB PROFILE FOR CANDIDATE
+# =========================================================
+
+def get_candidate_job_profile(
+    candidate_id
+):
+    """
+    Retrieve the selected job profile for a candidate.
+
+    The application supports several database structures.
+    If a job_profile column exists in candidates, it is used.
+    Otherwise the latest screening result/job profile is used.
+    Finally the current session is checked.
+    """
+
+    try:
+
+        database = get_database()
+
+        # -------------------------------------------------
+        # FIRST: CHECK CANDIDATES TABLE
+        # -------------------------------------------------
+
+        candidate_columns = get_table_columns(
+            "candidates"
+        )
+
+        job_profile_column = find_existing_column(
+            candidate_columns,
+            [
+                "job_profile",
+                "jobProfile",
+                "job_profile_title",
+                "job_title_profile"
+            ]
+        )
+
+        if job_profile_column:
+
+            try:
+
+                row = database.fetch_one(
+
+                    f"""
+                    SELECT
+                        `{job_profile_column}` AS job_profile
+                    FROM candidates
+                    WHERE id = %s
+                    LIMIT 1
+                    """,
+
+                    (
+                        candidate_id,
+                    )
+
+                )
+
+                if row:
+
+                    value = (
+                        row.get("job_profile")
+                        or ""
+                    ).strip()
+
+                    if value:
+
+                        return value
+
+            except Exception as error:
+
+                print(
+                    "Candidate job profile lookup error:",
+                    error
+                )
+
+
+        # -------------------------------------------------
+        # SECOND: CHECK SESSION
+        # -------------------------------------------------
+
+        uploaded = session.get(
+            "uploaded_cv"
+        )
+
+        if uploaded:
+
+            session_candidate_id = uploaded.get(
+                "candidate_id"
+            )
+
+            if (
+                str(session_candidate_id)
+                ==
+                str(candidate_id)
+            ):
+
+                value = (
+                    uploaded.get(
+                        "job_profile",
+                        ""
+                    )
+                    or ""
+                ).strip()
+
+                if value:
+
+                    return value
+
+
+        # -------------------------------------------------
+        # THIRD: CHECK SCREENING RESULT JOB ID
+        # -------------------------------------------------
+
+        try:
+
+            screening_columns = get_table_columns(
+                "screening_results"
+            )
+
+            if "job_id" in screening_columns:
+
+                row = database.fetch_one(
+
+                    """
+                    SELECT
+                        jp.job_title
+                    FROM screening_results sr
+                    INNER JOIN job_profiles jp
+                        ON jp.id = sr.job_id
+                    WHERE sr.candidate_id = %s
+                    ORDER BY sr.id DESC
+                    LIMIT 1
+                    """,
+
+                    (
+                        candidate_id,
+                    )
+
+                )
+
+                if row:
+
+                    value = (
+                        row.get("job_title")
+                        or ""
+                    ).strip()
+
+                    if value:
+
+                        return value
+
+        except Exception as error:
+
+            print(
+                "Screening job profile lookup error:",
+                error
+            )
+
+
+    except Exception as error:
+
+        print(
+            "Candidate job profile error:",
+            error
+        )
+
+
+    return ""
+
+
+# =========================================================
+# STORE CANDIDATE JOB PROFILE
+# =========================================================
+
+def save_candidate_job_profile(
+    candidate_id,
+    job_profile
+):
+    """
+    Store the selected Job Profile when the candidates
+    table supports it.
+
+    If the existing database does not contain the column,
+    the function safely attempts to add it. If the database
+    user cannot alter the table, screening still continues
+    because the selected profile is also retained in session.
+    """
+
+    job_profile = (
+        str(job_profile or "").strip()
+    )
+
+    if not job_profile:
+
+        return False
+
+
+    try:
+
+        database = get_database()
+
+        columns = get_table_columns(
+            "candidates"
+        )
+
+        job_profile_column = find_existing_column(
+            columns,
+            [
+                "job_profile",
+                "jobProfile",
+                "job_profile_title",
+                "job_title_profile"
+            ]
+        )
+
+
+        # -------------------------------------------------
+        # IF COLUMN DOES NOT EXIST, TRY TO ADD IT
+        # -------------------------------------------------
+
+        if not job_profile_column:
+
+            connection = get_database_connection(
+                database
+            )
+
+            if connection is not None:
+
+                cursor = connection.cursor()
+
+                try:
+
+                    cursor.execute(
+                        """
+                        ALTER TABLE candidates
+                        ADD COLUMN job_profile VARCHAR(255) NULL
+                        """
+                    )
+
+                    connection.commit()
+
+                    job_profile_column = "job_profile"
+
+                except Exception as error:
+
+                    connection.rollback()
+
+                    print(
+                        "Could not add candidates.job_profile "
+                        f"column: {error}"
+                    )
+
+                finally:
+
+                    cursor.close()
+
+
+            if not job_profile_column:
+
+                # The database may not allow ALTER TABLE.
+                # Session storage will still preserve the value
+                # for the current upload/rescreening workflow.
+                return False
+
+
+        execute_database_write(
+
+            f"""
+            UPDATE candidates
+            SET `{job_profile_column}` = %s
+            WHERE id = %s
+            """,
+
+            (
+                job_profile,
+                candidate_id
+            )
+
+        )
+
+        return True
+
+
+    except Exception as error:
+
+        print(
+            "Candidate job profile save error:",
+            error
+        )
+
+        return False
+
+
+# =========================================================
 # CANDIDATE DATABASE LIST
 # =========================================================
 
@@ -1091,16 +1385,42 @@ def get_database_candidates():
 
         database = get_database()
 
+        # Dynamically include job_profile when available.
+        candidate_columns = get_table_columns(
+            "candidates"
+        )
+
+        job_profile_column = find_existing_column(
+            candidate_columns,
+            [
+                "job_profile",
+                "jobProfile",
+                "job_profile_title",
+                "job_title_profile"
+            ]
+        )
+
+        selected_columns = """
+            id,
+            full_name,
+            email,
+            target_position,
+            status,
+            created_at
+        """
+
+        if job_profile_column:
+
+            selected_columns += (
+                f", `{job_profile_column}` AS job_profile"
+            )
+
+
         rows = database.fetch_all(
 
-            """
+            f"""
             SELECT
-                id,
-                full_name,
-                email,
-                target_position,
-                status,
-                created_at
+                {selected_columns}
             FROM candidates
             ORDER BY id DESC
             """
@@ -1120,6 +1440,11 @@ def get_database_candidates():
             candidate["skills"] = []
             candidate["cv_uploaded"] = False
             candidate["compatibility_band"] = ""
+
+
+            if "job_profile" not in candidate:
+
+                candidate["job_profile"] = ""
 
 
             try:
@@ -1187,6 +1512,52 @@ def get_database_candidates():
                         or ""
 
                     )
+
+
+                    # If candidate does not have a stored
+                    # job profile, recover it from job_id.
+                    if not candidate.get(
+                        "job_profile"
+                    ):
+
+                        try:
+
+                            job_id = screening.get(
+                                "job_id"
+                            )
+
+                            if job_id:
+
+                                job = database.fetch_one(
+
+                                    """
+                                    SELECT
+                                        job_title
+                                    FROM job_profiles
+                                    WHERE id = %s
+                                    LIMIT 1
+                                    """,
+
+                                    (
+                                        job_id,
+                                    )
+
+                                )
+
+                                if job:
+
+                                    candidate[
+                                        "job_profile"
+                                    ] = (
+                                        job.get(
+                                            "job_title"
+                                        )
+                                        or ""
+                                    )
+
+                        except Exception:
+
+                            pass
 
 
             except Exception as error:
@@ -1871,6 +2242,65 @@ def get_active_jobs():
 
 
 # =========================================================
+# =========================================================
+# DEFAULT JOB PROFILES
+# =========================================================
+
+def ensure_default_job_profiles():
+    """Create standard active job profiles once if they do not exist."""
+    defaults = [
+        ("Web Developer", "IT / Software Development", "Full Time", "1-2 Years", "Nairobi", "Develop, maintain and improve responsive web applications and websites.", "HTML, CSS, JavaScript, PHP, MySQL, Python, Flask, Git, Web Development, Database Management"),
+        ("Software Developer", "Software Development", "Full Time", "1-3 Years", "Nairobi", "Design, develop, test and maintain reliable software applications and services.", "Python, Java, C++, SQL, Git, Software Development, OOP, Database Management"),
+        ("Network Administrator", "Networking", "Full Time", "1-3 Years", "Nairobi", "Configure, monitor and maintain computer networks, network devices and connectivity services.", "Networking, TCP/IP, Routing, Switching, Cisco, Network Security, Troubleshooting, LAN/WAN"),
+        ("Cybersecurity Analyst", "Cybersecurity", "Full Time", "1-3 Years", "Nairobi", "Monitor security events, investigate threats and protect systems, networks and data.", "Cybersecurity, Network Security, Threat Detection, SIEM, Incident Response, Vulnerability Assessment, Linux"),
+        ("IT Support Specialist", "IT Support", "Full Time", "0-2 Years", "Nairobi", "Provide technical support and troubleshoot hardware and software issues.", "Computer Maintenance, Hardware Troubleshooting, Windows, Networking, Technical Support, Software Installation"),
+        ("Data Analyst", "Data & Analytics", "Full Time", "1-3 Years", "Nairobi", "Analyze data, prepare reports and provide insights for business decisions.", "Data Analysis, Excel, SQL, Python, Statistics, Data Visualization, Power BI")
+    ]
+
+    try:
+        database = get_database()
+        columns = get_table_columns("job_profiles")
+        if not columns or "job_title" not in columns or "status" not in columns:
+            return
+
+        for title, department, employment_type, experience_required, location, description, skills in defaults:
+            existing = database.fetch_one(
+                "SELECT id FROM job_profiles WHERE LOWER(TRIM(job_title)) = LOWER(TRIM(%s)) LIMIT 1",
+                (title,)
+            )
+            if existing:
+                continue
+
+            values_map = {
+                "job_title": title,
+                "department": department,
+                "employment_type": employment_type,
+                "experience_required": experience_required,
+                "location": location,
+                "status": "Active",
+                "job_description": description,
+                "required_skills": skills,
+                "created_at": datetime.now(),
+                "updated_at": datetime.now()
+            }
+
+            selected = [(column, value) for column, value in values_map.items() if column in columns]
+            if not selected:
+                continue
+
+            column_sql = ", ".join(f"`{column}`" for column, _ in selected)
+            placeholders = ", ".join(["%s"] * len(selected))
+            values = tuple(value for _, value in selected)
+
+            execute_database_write(
+                f"INSERT INTO job_profiles ({column_sql}) VALUES ({placeholders})",
+                values
+            )
+
+    except Exception as error:
+        print("Default job profile setup skipped:", error)
+
+
 # ENSURE SCREENING TABLES
 # =========================================================
 
@@ -2078,6 +2508,37 @@ def ensure_screening_tables():
                     )
 
 
+        # -------------------------------------------------
+        # JOB ID
+        # -------------------------------------------------
+
+        existing_columns = set(
+            get_table_columns(
+                "screening_results"
+            )
+        )
+
+
+        if "job_id" not in existing_columns:
+
+            try:
+
+                cursor.execute(
+
+                    """
+                    ALTER TABLE screening_results
+                    ADD COLUMN job_id INT NULL
+                    """
+
+                )
+
+            except Exception as error:
+
+                print(
+                    f"Could not add screening job_id column: {error}"
+                )
+
+
         connection.commit()
 
 
@@ -2137,11 +2598,28 @@ def get_job_id_for_position(
 ):
     """
     Find the database job profile ID that matches
-    the candidate's target position.
+    the selected Job Profile / target position.
+
+    Matching is case-insensitive and ignores surrounding
+    whitespace.
     """
+
+    position = str(
+        position or ""
+    ).strip()
+
+
+    if not position:
+
+        return None
+
 
     database = get_database()
 
+
+    # -----------------------------------------------------
+    # FIRST: ACTIVE EXACT MATCH
+    # -----------------------------------------------------
 
     row = database.fetch_one(
 
@@ -2151,7 +2629,7 @@ def get_job_id_for_position(
         FROM job_profiles
         WHERE LOWER(TRIM(job_title))
               = LOWER(TRIM(%s))
-          AND LOWER(status) = 'active'
+          AND LOWER(TRIM(status)) = 'active'
         ORDER BY id DESC
         LIMIT 1
         """,
@@ -2169,6 +2647,10 @@ def get_job_id_for_position(
             "id"
         )
 
+
+    # -----------------------------------------------------
+    # SECOND: EXACT MATCH, ANY STATUS
+    # -----------------------------------------------------
 
     row = database.fetch_one(
 
@@ -2235,9 +2717,10 @@ def save_screening_result(
 
         raise RuntimeError(
 
-            f"No job profile found for target position "
+            f"No job profile found for selected Job Profile "
             f"'{position}'. "
-            "Create an active job profile before screening."
+            "Please create/save this Job Profile in Jobs "
+            "before screening the CV."
 
         )
 
@@ -2874,7 +3357,8 @@ def update_candidate_status(
 def run_real_screening(
     candidate_id,
     file_path,
-    position
+    position,
+    job_profile=None
 ):
     """
     Complete real CV screening workflow:
@@ -2888,6 +3372,25 @@ def run_real_screening(
     -> Job matching
     -> Score
     -> Database
+
+    IMPORTANT:
+    The Job Profile selected on the Upload CV page is
+    used as the actual AI matching profile.
+
+    Example:
+
+        Target Position:
+            Senior Software Engineer
+
+        Job Profile:
+            Software Developer
+
+    The AI engine screens against:
+            Software Developer
+
+    while the candidate still retains:
+            Senior Software Engineer
+    as the target position.
     """
 
     if not SCREENING_ENGINE_AVAILABLE:
@@ -2927,10 +3430,90 @@ def run_real_screening(
         )
 
 
+    position = str(
+        position or ""
+    ).strip()
+
+
+    job_profile = str(
+        job_profile or ""
+    ).strip()
+
+
     if not position:
 
         raise ValueError(
             "Target position is required."
+        )
+
+
+    # -----------------------------------------------------
+    # DETERMINE ACTUAL SCREENING PROFILE
+    # -----------------------------------------------------
+
+    screening_position = (
+        job_profile
+        if job_profile
+        else position
+    )
+
+
+    # -----------------------------------------------------
+    # IF NO JOB PROFILE WAS SENT, TRY STORED PROFILE
+    # -----------------------------------------------------
+
+    if not job_profile:
+
+        stored_profile = get_candidate_job_profile(
+            candidate_id
+        )
+
+        if stored_profile:
+
+            screening_position = (
+                stored_profile
+            )
+
+
+    # -----------------------------------------------------
+    # FIND DATABASE JOB PROFILE
+    # -----------------------------------------------------
+
+    job_id = get_job_id_for_position(
+        screening_position
+    )
+
+
+    # -----------------------------------------------------
+    # FALLBACK TO TARGET POSITION
+    # -----------------------------------------------------
+
+    if (
+        not job_id
+        and screening_position.lower()
+        != position.lower()
+    ):
+
+        fallback_job_id = get_job_id_for_position(
+            position
+        )
+
+        if fallback_job_id:
+
+            job_id = fallback_job_id
+
+            screening_position = position
+
+
+    if not job_id:
+
+        raise RuntimeError(
+
+            f"No active job profile found for "
+            f"'{screening_position}'. "
+            "Please create/save the selected Job Profile "
+            "under Jobs before screening this CV."
+
         )
 
 
@@ -2973,16 +3556,55 @@ def run_real_screening(
 
 
     # -----------------------------------------------------
-    # AI matching engine
+    # AI MATCHING ENGINE
     # -----------------------------------------------------
 
-    analysis = calculate_match_score(
+    try:
 
-        cv_text,
+        analysis = calculate_match_score(
 
-        position
+            cv_text,
 
-    )
+            screening_position
+
+        )
+
+    except Exception as first_error:
+
+        # If the selected Job Profile cannot be resolved
+        # by the engine but the Target Position differs,
+        # attempt the target position as a safe fallback.
+
+        if (
+            screening_position.lower()
+            != position.lower()
+        ):
+
+            print(
+                "Job Profile AI matching failed. "
+                "Trying Target Position fallback:",
+                first_error
+            )
+
+            try:
+
+                analysis = calculate_match_score(
+
+                    cv_text,
+
+                    position
+
+                )
+
+                screening_position = position
+
+            except Exception:
+
+                raise first_error
+
+        else:
+
+            raise
 
 
     if not isinstance(
@@ -3005,7 +3627,7 @@ def run_real_screening(
 
 
     # -----------------------------------------------------
-    # Save result
+    # SAVE RESULT
     # -----------------------------------------------------
 
     result_id = save_screening_result(
@@ -3016,13 +3638,13 @@ def run_real_screening(
 
         processing_time_seconds,
 
-        position
+        screening_position
 
     )
 
 
     # -----------------------------------------------------
-    # Save matched skills
+    # SAVE MATCHED SKILLS
     # -----------------------------------------------------
 
     save_candidate_skills(
@@ -3038,7 +3660,7 @@ def run_real_screening(
 
 
     # -----------------------------------------------------
-    # Update status
+    # UPDATE STATUS
     # -----------------------------------------------------
 
     update_candidate_status(
@@ -3051,14 +3673,17 @@ def run_real_screening(
 
 
     # -----------------------------------------------------
-    # Prepare return data
+    # PREPARE RETURN DATA
     # -----------------------------------------------------
 
     match_score = safe_score(
 
         analysis.get(
             "match_score",
-            0
+            analysis.get(
+                "overall_score",
+                0
+            )
         )
 
     )
@@ -3077,6 +3702,12 @@ def run_real_screening(
 
         "position":
             position,
+
+        "job_profile":
+            screening_position,
+
+        "job_id":
+            job_id,
 
         "match_score":
             match_score,
@@ -3134,7 +3765,10 @@ def run_real_screening(
             safe_score(
                 analysis.get(
                     "skill_score",
-                    0
+                    analysis.get(
+                        "technical_skills_score",
+                        0
+                    )
                 )
             ),
 
@@ -3661,6 +4295,10 @@ def upload_cv():
         )
 
 
+        # -------------------------------------------------
+        # CREATE CANDIDATE
+        # -------------------------------------------------
+
         candidate_id = execute_database_write(
 
             """
@@ -3700,6 +4338,25 @@ def upload_cv():
             )
 
 
+        # -------------------------------------------------
+        # STORE SELECTED JOB PROFILE
+        # -------------------------------------------------
+
+        if job_profile:
+
+            save_candidate_job_profile(
+
+                candidate_id,
+
+                job_profile
+
+            )
+
+
+        # -------------------------------------------------
+        # SAVE CV METADATA
+        # -------------------------------------------------
+
         cv_record_saved = save_cv_document(
 
             candidate_id,
@@ -3712,6 +4369,10 @@ def upload_cv():
 
         )
 
+
+        # -------------------------------------------------
+        # SAVE SESSION DATA
+        # -------------------------------------------------
 
         session[
             "uploaded_cv"
@@ -3739,105 +4400,18 @@ def upload_cv():
                 original_filename,
 
             "file_path":
-                file_path
+                file_path,
+
+            "screening_completed":
+                False
 
         }
 
 
-        screening_data = None
-        screening_error = None
-
-
-        try:
-
-            screening_data = run_real_screening(
-
-                candidate_id,
-
-                file_path,
-
-                position
-
-            )
-
-
-            session[
-                "uploaded_cv"
-            ][
-                "screening_completed"
-            ] = True
-
-
-        except Exception as error:
-
-            screening_error = str(
-                error
-            )
-
-            print(
-                "AI screening error:",
-                error
-            )
-
-            session[
-                "uploaded_cv"
-            ][
-                "screening_completed"
-            ] = False
-
-
-        if screening_data:
-
-            return jsonify({
-
-                "success":
-                    True,
-
-                "message":
-                    (
-                        "CV uploaded, candidate registered, "
-                        "and AI screening completed successfully."
-                    ),
-
-                "candidate_id":
-                    candidate_id,
-
-                "candidate": {
-
-                    "id":
-                        candidate_id,
-
-                    "name":
-                        candidate_name,
-
-                    "email":
-                        email,
-
-                    "position":
-                        position,
-
-                    "status":
-                        "Screened"
-
-                },
-
-                "cv_record_saved":
-                    cv_record_saved,
-
-                "screening_completed":
-                    True,
-
-                "screening":
-                    screening_data,
-
-                "results_url":
-                    url_for(
-                        "results",
-                        candidate_id=candidate_id
-                    )
-
-            })
-
+        # -------------------------------------------------
+        # SUCCESS — NO AUTOMATIC SCREENING
+        # Redirect frontend to AI Screening page
+        # -------------------------------------------------
 
         return jsonify({
 
@@ -3846,8 +4420,8 @@ def upload_cv():
 
             "message":
                 (
-                    "CV uploaded and candidate registered, "
-                    "but AI screening could not be completed."
+                    "CV uploaded and candidate registered successfully. "
+                    "Proceed to AI Screening."
                 ),
 
             "candidate_id":
@@ -3867,6 +4441,9 @@ def upload_cv():
                 "position":
                     position,
 
+                "job_profile":
+                    job_profile,
+
                 "status":
                     "Pending"
 
@@ -3878,15 +4455,9 @@ def upload_cv():
             "screening_completed":
                 False,
 
-            "screening_error":
-                screening_error,
-
-            "next_step":
-                "Retry the screening using the screening API.",
-
-            "results_url":
+            "screening_url":
                 url_for(
-                    "results",
+                    "screening",
                     candidate_id=candidate_id
                 )
 
@@ -3928,65 +4499,190 @@ def upload_cv():
 
 
 # =========================================================
-# JOBS  (FINAL FIXED VERSION)
+# JOBS
 # =========================================================
 
-@app.route("/jobs", methods=["GET", "POST"])
-@app.route("/jobs.html", methods=["GET", "POST"])
+@app.route(
+    "/jobs",
+    methods=[
+        "GET",
+        "POST"
+    ]
+)
+@app.route(
+    "/jobs.html",
+    methods=[
+        "GET",
+        "POST"
+    ]
+)
 def jobs():
+    try:
+        ensure_default_job_profiles()
+    except Exception as error:
+        print("Jobs default profile initialization skipped:", error)
+
 
     if request.method == "POST":
 
-        job_title = request.form.get("job_title", "").strip()
-        department = request.form.get("department", "").strip()
-        employment_type = request.form.get("employment_type", "").strip()
-        experience_required = request.form.get("experience_required", "").strip()
-        job_description = request.form.get("job_description", "").strip()
-        required_skills = request.form.get("required_skills", "").strip()
-        minimum_education = request.form.get("minimum_education", "").strip()
-        location = request.form.get("location", "").strip()
+        job_title = request.form.get(
+            "job_title",
+            ""
+        ).strip()
 
-        if not all([job_title, department, employment_type, experience_required, job_description, minimum_education, location]):
-            flash("Please fill all required fields.", "error")
-            return redirect(url_for("jobs"))
+        department = request.form.get(
+            "department",
+            ""
+        ).strip()
+
+        employment_type = request.form.get(
+            "employment_type",
+            ""
+        ).strip()
+
+        experience_required = request.form.get(
+            "experience_required",
+            ""
+        ).strip()
+
+        job_description = request.form.get(
+            "job_description",
+            ""
+        ).strip()
+
+        required_skills = request.form.get(
+            "required_skills",
+            ""
+        ).strip()
+
+        minimum_education = request.form.get(
+            "minimum_education",
+            ""
+        ).strip()
+
+        location = request.form.get(
+            "location",
+            ""
+        ).strip()
+
+
+        if not all([
+            job_title,
+            department,
+            employment_type,
+            experience_required,
+            job_description,
+            minimum_education,
+            location
+        ]):
+
+            flash(
+                "Please fill all required fields.",
+                "error"
+            )
+
+            return redirect(
+                url_for("jobs")
+            )
+
 
         try:
+
             database = get_database()
-            columns = get_table_columns("job_profiles")
+
+            columns = get_table_columns(
+                "job_profiles"
+            )
 
             values_map = {
-                "job_title": job_title,
-                "department": department,
-                "employment_type": employment_type,
-                "experience_required": experience_required,
-                "job_description": job_description,
-                "required_skills": required_skills,
-                "minimum_education": minimum_education,
-                "location": location,
-                "status": "Active",
-                "created_by": 1,
-                "created_at": datetime.now(),
-                "updated_at": datetime.now()
+
+                "job_title":
+                    job_title,
+
+                "department":
+                    department,
+
+                "employment_type":
+                    employment_type,
+
+                "experience_required":
+                    experience_required,
+
+                "job_description":
+                    job_description,
+
+                "required_skills":
+                    required_skills,
+
+                "minimum_education":
+                    minimum_education,
+
+                "location":
+                    location,
+
+                "status":
+                    "Active",
+
+                "created_by":
+                    1,
+
+                "created_at":
+                    datetime.now(),
+
+                "updated_at":
+                    datetime.now()
+
             }
 
             selected_columns = []
             selected_values = []
 
+
             for column in columns:
+
                 if column in values_map:
-                    selected_columns.append(column)
-                    selected_values.append(values_map[column])
 
-            if "job_title" not in selected_columns or "status" not in selected_columns:
-                flash("Database structure error. Could not save job profile.", "error")
-                return redirect(url_for("jobs"))
+                    selected_columns.append(
+                        column
+                    )
 
-            placeholders = ", ".join(["%s"] * len(selected_values))
+                    selected_values.append(
+                        values_map[column]
+                    )
+
+
+            if (
+                "job_title"
+                not in selected_columns
+                or
+                "status"
+                not in selected_columns
+            ):
+
+                flash(
+                    "Database structure error. Could not save job profile.",
+                    "error"
+                )
+
+                return redirect(
+                    url_for("jobs")
+                )
+
+
+            placeholders = ", ".join(
+                ["%s"] * len(
+                    selected_values
+                )
+            )
+
 
             query = f"""
                 INSERT INTO job_profiles
                 (
-                    {", ".join(f"`{column}`" for column in selected_columns)}
+                    {", ".join(
+                        f"`{column}`"
+                        for column in selected_columns
+                    )}
                 )
                 VALUES
                 (
@@ -3994,46 +4690,154 @@ def jobs():
                 )
             """
 
-            execute_database_write(query, tuple(selected_values))
-            flash("Job profile created successfully!", "success")
 
-        except Exception as e:
-            print("Job creation error:", e)
-            flash(f"Failed to create job profile: {str(e)}", "error")
+            execute_database_write(
+                query,
+                tuple(selected_values)
+            )
 
-        return redirect(url_for("jobs"))
 
-    # ====================== GET Request ======================
+            flash(
+                "Job profile created successfully!",
+                "success"
+            )
+
+
+        except Exception as error:
+
+            print(
+                "Job creation error:",
+                error
+            )
+
+            flash(
+                f"Failed to create job profile: {error}",
+                "error"
+            )
+
+
+        return redirect(
+            url_for("jobs")
+        )
+
+
+    # =====================================================
+    # GET REQUEST
+    # =====================================================
+
     job_data = get_database_jobs()
+
     statistics = get_dashboard_statistics()
 
-    # Calculate extra stats for the counters
-    total_jobs = len(job_data)
-    full_time_jobs = sum(1 for job in job_data if str(job.get("employment_type", "")).lower() in ["full time", "full-time", "fulltime"])
-    departments = len(set(job.get("department") for job in job_data if job.get("department")))
+
+    total_jobs = len(
+        job_data
+    )
+
+
+    full_time_jobs = sum(
+
+        1
+        for job in job_data
+        if str(
+            job.get(
+                "employment_type",
+                ""
+            )
+        ).lower()
+        in [
+            "full time",
+            "full-time",
+            "fulltime"
+        ]
+
+    )
+
+
+    departments = len(
+
+        set(
+            job.get(
+                "department"
+            )
+            for job in job_data
+            if job.get(
+                "department"
+            )
+        )
+
+    )
+
 
     stats = {
-        "total_candidates": statistics["total_candidates"],
-        "cv_uploaded": statistics["cv_uploaded"],
-        "screened_candidates": statistics["screened_candidates"],
-        "shortlisted_candidates": statistics["shortlisted_candidates"],
-        "average_match": statistics["average_match"],
-        "active_jobs": statistics["active_jobs"],
-        "most_detected_skill": statistics["most_detected_skill"],
-        "requirements_met": statistics["requirements_met"],
-        "average_processing_time": statistics["average_processing_time"],
 
-        # New counters
-        "total_jobs": total_jobs,
-        "full_time_jobs": full_time_jobs,
-        "departments": departments
+        "total_candidates":
+            statistics[
+                "total_candidates"
+            ],
+
+        "cv_uploaded":
+            statistics[
+                "cv_uploaded"
+            ],
+
+        "screened_candidates":
+            statistics[
+                "screened_candidates"
+            ],
+
+        "shortlisted_candidates":
+            statistics[
+                "shortlisted_candidates"
+            ],
+
+        "average_match":
+            statistics[
+                "average_match"
+            ],
+
+        "active_jobs":
+            statistics[
+                "active_jobs"
+            ],
+
+        "most_detected_skill":
+            statistics[
+                "most_detected_skill"
+            ],
+
+        "requirements_met":
+            statistics[
+                "requirements_met"
+            ],
+
+        "average_processing_time":
+            statistics[
+                "average_processing_time"
+            ],
+
+        "total_jobs":
+            total_jobs,
+
+        "full_time_jobs":
+            full_time_jobs,
+
+        "departments":
+            departments
+
     }
 
+
     return render_template(
+
         "job_description.html",
+
         jobs=job_data,
+
         stats=stats,
+
         statistics=statistics
+
     )
 
 
@@ -4041,39 +4845,135 @@ def jobs():
 # JOB DESCRIPTION
 # =========================================================
 
-@app.route("/job-description", methods=["GET", "POST"])
+@app.route(
+    "/job-description",
+    methods=[
+        "GET",
+        "POST"
+    ]
+)
 def job_description():
 
     if request.method == "POST":
-        return redirect(url_for("jobs"))
+
+        return redirect(
+            url_for("jobs")
+        )
+
 
     job_data = get_database_jobs()
+
     statistics = get_dashboard_statistics()
 
-    total_jobs = len(job_data)
-    full_time_jobs = sum(1 for job in job_data if str(job.get("employment_type", "")).lower() in ["full time", "full-time", "fulltime"])
-    departments = len(set(job.get("department") for job in job_data if job.get("department")))
+
+    total_jobs = len(
+        job_data
+    )
+
+
+    full_time_jobs = sum(
+
+        1
+        for job in job_data
+        if str(
+            job.get(
+                "employment_type",
+                ""
+            )
+        ).lower()
+        in [
+            "full time",
+            "full-time",
+            "fulltime"
+        ]
+
+    )
+
+
+    departments = len(
+
+        set(
+            job.get(
+                "department"
+            )
+            for job in job_data
+            if job.get(
+                "department"
+            )
+        )
+
+    )
+
 
     stats = {
-        "total_candidates": statistics["total_candidates"],
-        "cv_uploaded": statistics["cv_uploaded"],
-        "screened_candidates": statistics["screened_candidates"],
-        "shortlisted_candidates": statistics["shortlisted_candidates"],
-        "average_match": statistics["average_match"],
-        "active_jobs": statistics["active_jobs"],
-        "most_detected_skill": statistics["most_detected_skill"],
-        "requirements_met": statistics["requirements_met"],
-        "average_processing_time": statistics["average_processing_time"],
-        "total_jobs": total_jobs,
-        "full_time_jobs": full_time_jobs,
-        "departments": departments
+
+        "total_candidates":
+            statistics[
+                "total_candidates"
+            ],
+
+        "cv_uploaded":
+            statistics[
+                "cv_uploaded"
+            ],
+
+        "screened_candidates":
+            statistics[
+                "screened_candidates"
+            ],
+
+        "shortlisted_candidates":
+            statistics[
+                "shortlisted_candidates"
+            ],
+
+        "average_match":
+            statistics[
+                "average_match"
+            ],
+
+        "active_jobs":
+            statistics[
+                "active_jobs"
+            ],
+
+        "most_detected_skill":
+            statistics[
+                "most_detected_skill"
+            ],
+
+        "requirements_met":
+            statistics[
+                "requirements_met"
+            ],
+
+        "average_processing_time":
+            statistics[
+                "average_processing_time"
+            ],
+
+        "total_jobs":
+            total_jobs,
+
+        "full_time_jobs":
+            full_time_jobs,
+
+        "departments":
+            departments
+
     }
 
+
     return render_template(
+
         "job_description.html",
+
         jobs=job_data,
+
         stats=stats,
+
         statistics=statistics
+
     )
 
 
@@ -4083,7 +4983,9 @@ def job_description():
 
 @app.route(
     "/api/jobs",
-    methods=["POST"]
+    methods=[
+        "POST"
+    ]
 )
 def create_job_profile():
     """
@@ -4092,182 +4994,423 @@ def create_job_profile():
 
     try:
 
-        data = request.get_json(silent=True) or {}
+        data = request.get_json(
+            silent=True
+        ) or {}
+
 
         if not data:
+
             data = request.form.to_dict()
 
+
         job_title = str(
-            data.get("job_title", "")
-            or data.get("jobTitle", "")
+
+            data.get(
+                "job_title",
+                ""
+            )
+            or
+            data.get(
+                "jobTitle",
+                ""
+            )
+
         ).strip()
+
 
         department = str(
-            data.get("department", "")
+
+            data.get(
+                "department",
+                ""
+            )
+
         ).strip()
+
 
         employment_type = str(
-            data.get("employment_type", "")
-            or data.get("employmentType", "")
+
+            data.get(
+                "employment_type",
+                ""
+            )
+            or
+            data.get(
+                "employmentType",
+                ""
+            )
+
         ).strip()
+
 
         experience_required = str(
-            data.get("experience_required", "")
-            or data.get("experience", "")
+
+            data.get(
+                "experience_required",
+                ""
+            )
+            or
+            data.get(
+                "experience",
+                ""
+            )
+
         ).strip()
+
 
         job_description_text = str(
-            data.get("job_description", "")
-            or data.get("description", "")
+
+            data.get(
+                "job_description",
+                ""
+            )
+            or
+            data.get(
+                "description",
+                ""
+            )
+
         ).strip()
+
 
         required_skills = str(
-            data.get("required_skills", "")
-            or data.get("skills", "")
+
+            data.get(
+                "required_skills",
+                ""
+            )
+            or
+            data.get(
+                "skills",
+                ""
+            )
+
         ).strip()
+
 
         minimum_education = str(
-            data.get("minimum_education", "")
-            or data.get("education", "")
+
+            data.get(
+                "minimum_education",
+                ""
+            )
+            or
+            data.get(
+                "education",
+                ""
+            )
+
         ).strip()
+
 
         location = str(
-            data.get("location", "")
+
+            data.get(
+                "location",
+                ""
+            )
+
         ).strip()
 
+
         if not job_title:
+
             return jsonify({
-                "success": False,
-                "message": "Job title is required."
+
+                "success":
+                    False,
+
+                "message":
+                    "Job title is required."
+
             }), 400
+
 
         if not department:
+
             return jsonify({
-                "success": False,
-                "message": "Department is required."
+
+                "success":
+                    False,
+
+                "message":
+                    "Department is required."
+
             }), 400
+
 
         if not employment_type:
+
             return jsonify({
-                "success": False,
-                "message": "Employment type is required."
+
+                "success":
+                    False,
+
+                "message":
+                    "Employment type is required."
+
             }), 400
+
 
         if not experience_required:
+
             return jsonify({
-                "success": False,
-                "message": "Experience requirement is required."
+
+                "success":
+                    False,
+
+                "message":
+                    "Experience requirement is required."
+
             }), 400
+
 
         if not job_description_text:
+
             return jsonify({
-                "success": False,
-                "message": "Job description is required."
+
+                "success":
+                    False,
+
+                "message":
+                    "Job description is required."
+
             }), 400
+
 
         if not minimum_education:
+
             return jsonify({
-                "success": False,
-                "message": "Minimum education is required."
+
+                "success":
+                    False,
+
+                "message":
+                    "Minimum education is required."
+
             }), 400
+
 
         if not location:
+
             return jsonify({
-                "success": False,
-                "message": "Location is required."
+
+                "success":
+                    False,
+
+                "message":
+                    "Location is required."
+
             }), 400
 
+
         database = get_database()
-        columns = get_table_columns("job_profiles")
+
+        columns = get_table_columns(
+            "job_profiles"
+        )
+
 
         if not columns:
+
             return jsonify({
-                "success": False,
-                "message": "The job_profiles table could not be inspected."
+
+                "success":
+                    False,
+
+                "message":
+                    "The job_profiles table could not be inspected."
+
             }), 500
 
+
         values_map = {
-            "job_title": job_title,
-            "department": department,
-            "employment_type": employment_type,
-            "experience_required": experience_required,
-            "job_description": job_description_text,
-            "required_skills": required_skills,
-            "minimum_education": minimum_education,
-            "location": location,
-            "status": "Active",
-            "created_by": 1,
-            "created_at": datetime.now(),
-            "updated_at": datetime.now()
+
+            "job_title":
+                job_title,
+
+            "department":
+                department,
+
+            "employment_type":
+                employment_type,
+
+            "experience_required":
+                experience_required,
+
+            "job_description":
+                job_description_text,
+
+            "required_skills":
+                required_skills,
+
+            "minimum_education":
+                minimum_education,
+
+            "location":
+                location,
+
+            "status":
+                "Active",
+
+            "created_by":
+                1,
+
+            "created_at":
+                datetime.now(),
+
+            "updated_at":
+                datetime.now()
+
         }
+
 
         selected_columns = []
         selected_values = []
 
+
         for column in columns:
+
             if column in values_map:
-                selected_columns.append(column)
-                selected_values.append(values_map[column])
+
+                selected_columns.append(
+                    column
+                )
+
+                selected_values.append(
+                    values_map[column]
+                )
+
 
         if "job_title" not in selected_columns:
+
             return jsonify({
-                "success": False,
-                "message": "The job_profiles table is missing the job_title column."
+
+                "success":
+                    False,
+
+                "message":
+                    "The job_profiles table is missing the job_title column."
+
             }), 500
+
 
         if "status" not in selected_columns:
+
             return jsonify({
-                "success": False,
-                "message": "The job_profiles table is missing the status column."
+
+                "success":
+                    False,
+
+                "message":
+                    "The job_profiles table is missing the status column."
+
             }), 500
 
+
         placeholders = ", ".join(
-            ["%s"] * len(selected_values)
+
+            ["%s"]
+            *
+            len(
+                selected_values
+            )
+
         )
+
 
         query = f"""
+
             INSERT INTO job_profiles
+
             (
+
                 {", ".join(
+
                     f"`{column}`"
+
                     for column in selected_columns
+
                 )}
+
             )
+
             VALUES
+
             (
+
                 {placeholders}
+
             )
+
         """
 
+
         job_id = execute_database_write(
+
             query,
-            tuple(selected_values)
+
+            tuple(
+                selected_values
+            )
+
         )
 
+
         saved_job = database.fetch_one(
+
             """
+
             SELECT
+
                 id,
+
                 job_title,
+
                 department,
+
                 employment_type,
+
                 experience_required,
+
                 location,
+
                 status,
+
                 created_at
+
             FROM job_profiles
+
             WHERE id = %s
+
             LIMIT 1
+
             """,
-            (job_id,)
+
+            (
+                job_id,
+            )
+
         ) if job_id else None
 
+
         return jsonify({
-            "success": True,
-            "message": "Job profile created successfully.",
-            "job_id": job_id,
-            "job": saved_job
+
+            "success":
+                True,
+
+            "message":
+                "Job profile created successfully.",
+
+            "job_id":
+                job_id,
+
+            "job":
+                saved_job
+
         }), 201
+
 
     except Exception as error:
 
@@ -4276,9 +5419,15 @@ def create_job_profile():
             error
         )
 
+
         return jsonify({
-            "success": False,
-            "message": f"Job profile could not be created: {error}"
+
+            "success":
+                False,
+
+            "message":
+                f"Job profile could not be created: {error}"
+
         }), 500
 
 
@@ -4287,39 +5436,52 @@ def create_job_profile():
 # =========================================================
 
 @app.route("/screening")
+@app.route("/screening.html")
 def screening():
+    """Display the AI Screening workspace without redirecting to Results."""
+    try:
+        ensure_default_job_profiles()
+    except Exception as error:
+        print("Screening job profile initialization skipped:", error)
 
-    uploaded = session.get(
-        "uploaded_cv"
-    )
+    job_profiles = []
+    try:
+        job_profiles = get_database_jobs() or []
+    except Exception as error:
+        print("Could not load job profiles for screening page:", error)
 
+    uploaded = session.get("uploaded_cv") or {}
 
-    if uploaded:
+    # Support candidate_id from query string (from upload redirect)
+    candidate_id = request.args.get("candidate_id")
+    if candidate_id:
+        try:
+            candidate_id = int(candidate_id)
+            if not uploaded or str(uploaded.get("candidate_id")) != str(candidate_id):
+                # Load candidate into session context if needed
+                candidate = get_candidate(candidate_id)
+                if candidate:
+                    uploaded = {
+                        "candidate_id": candidate_id,
+                        "candidate_name": candidate.get("full_name", ""),
+                        "email": candidate.get("email", ""),
+                        "position": candidate.get("target_position", ""),
+                        "job_profile": get_candidate_job_profile(candidate_id),
+                        "screening_completed": False
+                    }
+                    session["uploaded_cv"] = uploaded
+        except (ValueError, TypeError):
+            pass
 
-        candidate_id = uploaded.get(
-            "candidate_id"
-        )
-
-
-        if candidate_id:
-
-            return redirect(
-
-                url_for(
-
-                    "results",
-
-                    candidate_id=candidate_id
-
-                )
-
-            )
-
-
-    return redirect(
-        url_for(
-            "upload_cv"
-        )
+    return render_template(
+        "screening.html",
+        job_profiles=job_profiles,
+        jobs=job_profiles,
+        uploaded_cv=uploaded,
+        screening_engine_available=SCREENING_ENGINE_AVAILABLE,
+        app_name=APP_NAME,
+        app_version=APP_VERSION,
+        organization_name=ORGANIZATION_NAME
     )
 
 
@@ -4368,6 +5530,10 @@ def api_screen_candidate(
             }), 404
 
 
+        # -------------------------------------------------
+        # TARGET POSITION
+        # -------------------------------------------------
+
         position = (
 
             candidate.get(
@@ -4395,6 +5561,31 @@ def api_screen_candidate(
             }), 400
 
 
+        # -------------------------------------------------
+        # JOB PROFILE
+        # -------------------------------------------------
+
+        job_profile = (
+
+            request.form.get(
+                "job_profile",
+                ""
+            ).strip()
+
+        )
+
+
+        if not job_profile:
+
+            job_profile = get_candidate_job_profile(
+                candidate_id
+            )
+
+
+        # -------------------------------------------------
+        # FILE PATH
+        # -------------------------------------------------
+
         file_path = None
 
 
@@ -4411,13 +5602,27 @@ def api_screen_candidate(
 
 
             if (
-                session_candidate_id
-                == candidate_id
+                str(session_candidate_id)
+                ==
+                str(candidate_id)
             ):
 
                 file_path = uploaded.get(
                     "file_path"
                 )
+
+
+                if not job_profile:
+
+                    job_profile = (
+
+                        uploaded.get(
+                            "job_profile",
+                            ""
+                        )
+                        or ""
+
+                    )
 
 
         if not file_path:
@@ -4440,16 +5645,23 @@ def api_screen_candidate(
             }), 404
 
 
+        # -------------------------------------------------
+        # RUN SCREENING WITH ACTUAL JOB PROFILE
+        # -------------------------------------------------
+
         screening_data = run_real_screening(
 
             candidate_id,
-
             file_path,
-
-            position
+            position,
+            job_profile=job_profile
 
         )
 
+
+        # -------------------------------------------------
+        # STORE UPDATED SESSION
+        # -------------------------------------------------
 
         session[
             "uploaded_cv"
@@ -4472,6 +5684,12 @@ def api_screen_candidate(
 
             "position":
                 position,
+
+            "job_profile":
+                screening_data.get(
+                    "job_profile",
+                    job_profile
+                ),
 
             "file_path":
                 file_path,
@@ -4778,6 +5996,64 @@ def results(
         )
 
 
+        # -------------------------------------------------
+        # RECOVER JOB PROFILE
+        # -------------------------------------------------
+
+        result_job_profile = ""
+
+        try:
+
+            job_id = screening_result.get(
+                "job_id"
+            )
+
+            if job_id:
+
+                database = get_database()
+
+                job_row = database.fetch_one(
+
+                    """
+                    SELECT
+                        job_title
+                    FROM job_profiles
+                    WHERE id = %s
+                    LIMIT 1
+                    """,
+
+                    (
+                        job_id,
+                    )
+
+                )
+
+                if job_row:
+
+                    result_job_profile = (
+
+                        job_row.get(
+                            "job_title"
+                        )
+                        or ""
+
+                    )
+
+        except Exception as error:
+
+            print(
+                "Result job profile lookup error:",
+                error
+            )
+
+
+        if not result_job_profile:
+
+            result_job_profile = get_candidate_job_profile(
+                candidate_id
+            )
+
+
         result_data = {
 
             "candidate": {
@@ -4805,7 +6081,10 @@ def results(
                     candidate.get(
                         "target_position",
                         "Not specified"
-                    )
+                    ),
+
+                "job_profile":
+                    result_job_profile
 
             },
 
@@ -4938,6 +6217,15 @@ def results(
                         else
 
                         "Not available"
+                    ),
+
+                "job_profile":
+                    (
+                        get_candidate_job_profile(
+                            candidate_id
+                        )
+                        if candidate_id
+                        else ""
                     )
 
             },
@@ -5265,7 +6553,12 @@ def api_candidates():
 # API - JOBS
 # =========================================================
 
-@app.route("/api/jobs")
+@app.route(
+    "/api/jobs",
+    methods=[
+        "GET"
+    ]
+)
 def api_jobs():
 
     job_data = (
@@ -5555,6 +6848,12 @@ def internal_server_error(error):
 # =========================================================
 
 if __name__ == "__main__":
+
+    try:
+        ensure_default_job_profiles()
+    except Exception as error:
+        print("Default job profile initialization error:", error)
+
 
     print()
 

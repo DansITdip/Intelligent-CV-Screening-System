@@ -3,1359 +3,1513 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Candidates | Intelligent CV Screening System</title>
+
+    <title>Candidates | CV SCREEN AI</title>
 
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: "Segoe UI", Arial, sans-serif;
-        }
-
-        :root {
-            --bg: #07111f;
-            --panel: #0b1929;
-            --panel-2: #0a1726;
-            --border: #193047;
-            --border-soft: #14283a;
-            --text: #edf5fb;
-            --muted: #718ba0;
-            --blue: #168cff;
-            --cyan: #00c8ff;
-            --green: #4ed39a;
-            --orange: #ffb55d;
-            --red: #ff7777;
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            background: #07111f;
+            color: #e8f1fb;
             min-height: 100vh;
         }
 
-        a { text-decoration: none; }
-        button, input, select { font: inherit; }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-        /* SIDEBAR */
+        /* =====================================================
+           LAYOUT
+        ===================================================== */
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
             width: 250px;
-            height: 100vh;
-            background: #0a1728;
-            border-right: 1px solid #1a3048;
-            padding: 25px 18px;
-            z-index: 1000;
+            background: #091827;
+            border-right: 1px solid #18314a;
+            padding: 25px 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
         }
 
         .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 5px 10px 28px;
-            border-bottom: 1px solid #1a3048;
-            margin-bottom: 25px;
+            padding: 8px 12px 26px;
+            border-bottom: 1px solid #18314a;
+            margin-bottom: 22px;
         }
 
-        .brand-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #1688ff, #00c8ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        .brand-title {
+            color: #38bdf8;
+            font-size: 21px;
             font-weight: 800;
-            font-size: 17px;
+            letter-spacing: 0.5px;
         }
 
-        .brand-text h2 {
-            font-size: 15px;
-            color: #fff;
-        }
-
-        .brand-text span {
-            display: block;
+        .brand-subtitle {
+            color: #718ba1;
             font-size: 9px;
-            color: #6e91ad;
-            letter-spacing: 1px;
-            margin-top: 2px;
+            letter-spacing: 1.3px;
+            margin-top: 6px;
         }
 
-        .menu-title {
+        .nav-label {
+            color: #587187;
             font-size: 10px;
-            color: #57758e;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 20px 12px 10px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            padding: 0 12px 10px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 13px;
-            padding: 13px 14px;
-            margin-bottom: 5px;
+            gap: 12px;
+            padding: 12px 13px;
+            margin: 4px 0;
             border-radius: 9px;
-            color: #8ba5ba;
-            transition: .25s;
+            color: #9db1c4;
             font-size: 14px;
+            transition: 0.2s ease;
         }
 
         .nav-item:hover {
-            background: #10243a;
-            color: white;
+            background: #10263a;
+            color: #ffffff;
         }
 
         .nav-item.active {
-            background: linear-gradient(90deg, rgba(24,137,255,.18), rgba(0,200,255,.08));
-            color: white;
-            border-left: 3px solid #159cff;
+            background: rgba(37, 99, 235, 0.18);
+            color: #4fc3f7;
+            border: 1px solid rgba(56, 189, 248, 0.14);
         }
 
         .nav-icon {
-            width: 22px;
+            width: 20px;
             text-align: center;
-            font-size: 16px;
+            font-size: 15px;
         }
 
-        .logout {
-            position: absolute;
-            bottom: 25px;
-            left: 18px;
-            right: 18px;
-            border-top: 1px solid #1a3048;
-            padding-top: 18px;
-        }
+        /* =====================================================
+           MAIN
+        ===================================================== */
 
-        /* MAIN */
         .main {
             margin-left: 250px;
-            min-height: 100vh;
+            width: calc(100% - 250px);
+            padding: 30px;
         }
 
         .topbar {
-            height: 76px;
-            background: #091625;
-            border-bottom: 1px solid #172c42;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0 35px;
-        }
-
-        .page-title h1 {
-            font-size: 20px;
-            color: white;
-            font-weight: 600;
-        }
-
-        .page-title p {
-            font-size: 12px;
-            color: #67859d;
-            margin-top: 3px;
-        }
-
-        .top-right {
-            display: flex;
             align-items: center;
             gap: 20px;
+            margin-bottom: 28px;
         }
 
-        .engine-status {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 12px;
-            border: 1px solid rgba(78,211,154,.18);
-            background: rgba(78,211,154,.06);
-            border-radius: 20px;
-            color: #84e5b7;
+        .eyebrow {
+            color: #38bdf8;
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 7px;
         }
 
-        .engine-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 10px rgba(78,211,154,.7);
+        .page-title {
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 7px;
         }
 
-        .profile {
+        .page-subtitle {
+            color: #8097ad;
+            font-size: 14px;
+        }
+
+        .top-actions {
             display: flex;
-            align-items: center;
             gap: 10px;
         }
 
-        .profile-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #137ff0, #00b8e6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: bold;
-            color: white;
-        }
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
 
-        .profile-info strong {
-            display: block;
-            font-size: 13px;
-            color: white;
-        }
-
-        .profile-info span {
-            font-size: 10px;
-            color: #668198;
-        }
-
-        /* CONTENT */
-        .content {
-            padding: 30px 35px;
-        }
-
-        .heading-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 25px;
-            gap: 20px;
-        }
-
-        .heading-row h2 {
-            font-size: 25px;
-            color: white;
-            margin-bottom: 6px;
-        }
-
-        .heading-row p {
-            color: #718ba0;
+        .btn {
+            border: 1px solid #23455f;
+            background: #0c2235;
+            color: #b7d7ec;
+            border-radius: 8px;
+            padding: 11px 16px;
             font-size: 12px;
-            max-width: 720px;
-        }
-
-        .add-btn {
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #087fe9, #00a9d8);
-            color: white;
-            padding: 12px 18px;
-            border-radius: 9px;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-            transition: .2s;
+            justify-content: center;
+            gap: 7px;
         }
 
-        .add-btn:hover {
-            transform: translateY(-1px);
-            opacity: .95;
+        .btn:hover {
+            background: #14344d;
+            border-color: #2f6b91;
         }
 
-        /* STATISTICS */
-        .stats {
+        .btn-primary {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            border-color: #1d4ed8;
+        }
+
+        /* =====================================================
+           SUMMARY CARDS
+        ===================================================== */
+
+        .summary-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-            margin-bottom: 25px;
+            gap: 16px;
+            margin-bottom: 22px;
         }
 
-        .stat-card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 13px;
-            padding: 20px;
-        }
-
-        .stat-label {
-            color: #718ca2;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            margin-bottom: 12px;
-        }
-
-        .stat-value {
-            color: white;
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .stat-description {
-            color: #5d788e;
-            font-size: 10px;
-            margin-top: 6px;
-        }
-
-        .stat-description.green {
-            color: var(--green);
-        }
-
-        /* TOOLBAR */
-        .toolbar {
-            background: var(--panel);
-            border: 1px solid var(--border);
+        .summary-card {
+            background: #0b1b2c;
+            border: 1px solid #18344e;
             border-radius: 13px;
             padding: 18px;
+        }
+
+        .summary-label {
+            color: #7890a5;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .summary-value {
+            font-size: 25px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+
+        /* =====================================================
+           CANDIDATES PANEL
+        ===================================================== */
+
+        .panel {
+            background: #0b1b2c;
+            border: 1px solid #18344e;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #18344e;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 15px;
-            margin-bottom: 20px;
         }
 
-        .search-box {
-            flex: 1;
-            max-width: 500px;
-            position: relative;
+        .panel-title {
+            font-size: 17px;
+            font-weight: 750;
         }
 
-        .search-box input {
-            width: 100%;
-            background: #081523;
-            border: 1px solid #20384f;
-            border-radius: 8px;
-            padding: 11px 14px 11px 40px;
-            color: white;
-            outline: none;
+        .panel-subtitle {
+            color: #7890a5;
             font-size: 12px;
-        }
-
-        .search-box input:focus {
-            border-color: var(--blue);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 14px;
-            top: 9px;
-            color: #5e7b92;
-            font-size: 15px;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 9px;
-        }
-
-        .filter {
-            background: #081523;
-            border: 1px solid #20384f;
-            color: #829caf;
-            padding: 10px 13px;
-            border-radius: 8px;
-            font-size: 11px;
-            outline: none;
-            min-width: 145px;
-        }
-
-        /* TABLE */
-        .table-card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 13px;
-            overflow: hidden;
-        }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 22px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .table-header h3 {
-            font-size: 15px;
-            color: white;
-        }
-
-        .table-header span {
-            color: #607d94;
-            font-size: 10px;
+            margin-top: 5px;
         }
 
         .table-wrapper {
+            width: 100%;
             overflow-x: auto;
         }
 
         table {
             width: 100%;
+            min-width: 1100px;
             border-collapse: collapse;
-            min-width: 950px;
         }
 
         th {
+            background: #0a1726;
+            color: #718ba1;
             text-align: left;
-            padding: 13px 20px;
-            background: var(--panel-2);
-            color: #5f7b91;
             font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: .7px;
-            border-bottom: 1px solid var(--border);
+            letter-spacing: 0.8px;
+            padding: 14px 16px;
+            white-space: nowrap;
         }
 
         td {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-soft);
-            color: #a7bac9;
-            font-size: 12px;
+            padding: 15px 16px;
+            border-top: 1px solid #132b41;
+            font-size: 13px;
             vertical-align: middle;
         }
 
         tr:hover td {
-            background: rgba(18,48,75,.25);
+            background: rgba(17, 43, 65, 0.28);
         }
 
-        .candidate {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-        }
+        /* =====================================================
+           CANDIDATE INFORMATION
+        ===================================================== */
 
-        .candidate-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #12385a, #155274);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #67d4ff;
-            font-size: 10px;
+        .candidate-name {
+            color: #ffffff;
             font-weight: 700;
-            flex-shrink: 0;
         }
 
-        .candidate-info strong {
-            display: block;
-            color: white;
-            font-size: 12px;
-            margin-bottom: 3px;
+        .candidate-email {
+            color: #6f879b;
+            font-size: 11px;
+            margin-top: 4px;
         }
 
-        .candidate-info span {
-            color: #5f7d94;
-            font-size: 10px;
+        .candidate-position {
+            color: #b9ccdc;
         }
 
-        .skills-list {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-            max-width: 260px;
+        /* =====================================================
+           SCORE
+        ===================================================== */
+
+        .score {
+            color: #4ade80;
+            font-size: 16px;
+            font-weight: 800;
         }
 
-        .skill-chip {
-            background: rgba(22,140,255,.07);
-            border: 1px solid rgba(22,140,255,.14);
-            color: #77c8f5;
-            border-radius: 5px;
-            padding: 4px 7px;
-            font-size: 9px;
+        .score.pending {
+            color: #f59e0b;
         }
 
-        .match-wrap {
-            min-width: 90px;
-        }
-
-        .match-score {
-            font-weight: 700;
-            color: var(--green);
-            margin-bottom: 5px;
-            cursor: pointer;
-            transition: .2s;
-        }
-
-        .match-score:hover {
-            text-decoration: underline;
-            color: #6ee7b7;
-        }
-
-        .match-score.medium { color: var(--orange); }
-        .match-score.low { color: var(--red); }
-
-        .mini-progress {
-            width: 75px;
-            height: 4px;
-            border-radius: 10px;
-            background: #162b3e;
-            overflow: hidden;
-        }
-
-        .mini-progress-bar {
-            height: 100%;
-            width: 0;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #168cff, #00c8ff);
-            transition: width 0.6s ease;
-        }
+        /* =====================================================
+           STATUS
+        ===================================================== */
 
         .status {
             display: inline-flex;
             align-items: center;
             padding: 5px 9px;
             border-radius: 20px;
-            font-size: 9px;
-            font-weight: 600;
-            white-space: nowrap;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
-        .shortlisted {
-            background: rgba(50,211,144,.1);
-            color: var(--green);
-            border: 1px solid rgba(50,211,144,.2);
+        .status-screened {
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
-        .review {
-            background: rgba(255,169,64,.1);
-            color: var(--orange);
-            border: 1px solid rgba(255,169,64,.2);
+        .status-pending {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.2);
         }
 
-        .rejected {
-            background: rgba(255,80,80,.1);
-            color: var(--red);
-            border: 1px solid rgba(255,80,80,.2);
+        .status-other {
+            background: rgba(148, 163, 184, 0.12);
+            color: #aab9c8;
+            border: 1px solid rgba(148, 163, 184, 0.2);
         }
 
-        .pending {
-            background: rgba(120,150,175,.1);
-            color: #8ca7bb;
-            border: 1px solid rgba(120,150,175,.2);
-        }
+        /* =====================================================
+           ACTIONS
+        ===================================================== */
 
-        .screened {
-            background: rgba(22,140,255,.10);
-            color: #67caff;
-            border: 1px solid rgba(22,140,255,.20);
-        }
-
-        .actions {
+        .row-actions {
             display: flex;
-            gap: 6px;
+            align-items: center;
+            gap: 7px;
             flex-wrap: wrap;
         }
 
         .action-btn {
-            border: 1px solid #20384f;
-            background: #081523;
-            color: #70cfff;
-            padding: 6px 9px;
+            border: 1px solid #23455f;
+            background: #0c2235;
+            color: #b7d7ec;
             border-radius: 7px;
-            font-size: 10px;
+            padding: 8px 10px;
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
-            transition: .2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            transition: 0.2s ease;
+            white-space: nowrap;
         }
 
         .action-btn:hover {
-            background: #112b42;
-            color: white;
-            border-color: #2d5877;
+            background: #14344d;
+            border-color: #2f6b91;
         }
 
-        .action-btn.results-btn {
-            background: rgba(22,140,255,.08);
-            border-color: rgba(22,140,255,.18);
+        .action-btn.rescreen {
+            background: rgba(37, 99, 235, 0.15);
+            color: #60c9ff;
+            border-color: rgba(56, 189, 248, 0.28);
         }
 
-        .action-btn.shortlist-btn {
-            background: rgba(78,211,154,.08);
-            border-color: rgba(78,211,154,.18);
-            color: #84e5b7;
+        .action-btn.rescreen:hover {
+            background: rgba(37, 99, 235, 0.30);
+            color: #ffffff;
         }
 
-        /* EMPTY / LOADING */
-        .state-row td {
-            padding: 55px 20px;
+        .action-btn:disabled {
+            opacity: 0.55;
+            cursor: wait;
+        }
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty-state {
             text-align: center;
+            padding: 65px 20px;
+            color: #718ba1;
         }
 
-        .state-box {
-            color: #658197;
+        .empty-icon {
+            font-size: 38px;
+            margin-bottom: 14px;
         }
 
-        .state-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 14px;
-            background: rgba(22,140,255,.07);
-            color: #67caff;
-            font-size: 20px;
+        .empty-state h3 {
+            color: #c8d7e5;
+            margin-bottom: 8px;
         }
 
-        .state-box strong {
-            display: block;
-            color: #cddae4;
-            font-size: 13px;
-            margin-bottom: 5px;
+        .empty-state p {
+            margin-bottom: 20px;
         }
 
-        .state-box span {
-            font-size: 11px;
-        }
+        /* =====================================================
+           RESCREENING MODAL
+        ===================================================== */
 
-        .loading-spinner {
-            width: 28px;
-            height: 28px;
-            border: 3px solid #1b354c;
-            border-top-color: var(--cyan);
-            border-radius: 50%;
-            margin: 0 auto 12px;
-            animation: spin .8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* PAGINATION */
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 20px;
-        }
-
-        .pagination-info {
-            color: #5e7b91;
-            font-size: 10px;
-        }
-
-        .pages {
-            display: flex;
-            gap: 6px;
-        }
-
-        .page {
-            min-width: 30px;
-            height: 30px;
-            padding: 0 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 7px;
-            background: #10263b;
-            border: 1px solid #203b54;
-            color: #8ca5b8;
-            font-size: 10px;
-            cursor: pointer;
-        }
-
-        .page:hover {
-            background: #17344e;
-            color: white;
-        }
-
-        .page.active {
-            background: #087fe9;
-            border-color: #087fe9;
-            color: white;
-        }
-
-        .page.disabled {
-            opacity: .4;
-            pointer-events: none;
-        }
-
-        /* MODAL */
-        .modal-overlay {
+        .screening-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(1,9,17,.72);
+            background: rgba(3, 10, 18, 0.80);
             backdrop-filter: blur(5px);
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            z-index: 2000;
+            z-index: 9999;
         }
 
-        .modal-overlay.show {
+        .screening-overlay.show {
             display: flex;
         }
 
-        .modal {
-            width: min(650px, 100%);
-            max-height: 90vh;
-            overflow-y: auto;
-            background: #0b1929;
-            border: 1px solid #274159;
-            border-radius: 16px;
+        .screening-box {
+            width: min(92%, 440px);
+            background: #0c1e30;
+            border: 1px solid #24506e;
+            border-radius: 17px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45);
         }
 
-        .modal-head {
-            padding: 20px 22px;
-            border-bottom: 1px solid #193047;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .spinner {
+            width: 46px;
+            height: 46px;
+            border: 3px solid #1d3d55;
+            border-top-color: #38bdf8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 18px;
         }
 
-        .modal-head h3 {
-            color: white;
-            font-size: 16px;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        .close-btn {
-            border: 0;
-            background: transparent;
-            color: #829caf;
-            font-size: 22px;
-            cursor: pointer;
+        .screening-box h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
         }
 
-        .modal-body {
-            padding: 22px;
+        .screening-box p {
+            color: #8298ad;
+            font-size: 13px;
+            line-height: 1.6;
         }
 
-        .detail-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 22px;
-        }
+        /* =====================================================
+           ERROR MESSAGE
+        ===================================================== */
 
-        .detail-avatar {
-            width: 54px;
-            height: 54px;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #168cff, #00c8ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            color: white;
-        }
-
-        .detail-header strong {
-            display: block;
-            color: white;
-            font-size: 17px;
-        }
-
-        .detail-header span {
-            color: #68859d;
-            font-size: 11px;
-            margin-top: 3px;
-        }
-
-        .detail-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .detail-card {
-            background: #081523;
-            border: 1px solid #1c344b;
+        .error-message {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            max-width: 400px;
+            padding: 14px 18px;
+            background: #321820;
+            border: 1px solid rgba(248, 113, 113, 0.4);
             border-radius: 10px;
-            padding: 14px;
+            color: #fecaca;
+            font-size: 13px;
+            display: none;
+            z-index: 10000;
         }
 
-        .detail-card.full {
-            grid-column: 1 / -1;
+        .error-message.show {
+            display: block;
         }
 
-        .detail-label {
-            color: #5e7b91;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            margin-bottom: 6px;
-        }
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
 
-        .detail-value {
-            color: #dce8f0;
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .modal-footer {
-            padding: 16px 22px 20px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
-        /* RESPONSIVE */
         @media (max-width: 1100px) {
-            .stats { grid-template-columns: repeat(2, 1fr); }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        @media (max-width: 850px) {
+        @media (max-width: 760px) {
+
+            .layout {
+                display: block;
+            }
+
             .sidebar {
-                width: 70px;
-                padding: 20px 10px;
+                position: static;
+                width: 100%;
+                height: auto;
             }
-            .brand-text, .menu-title, .nav-item span, .logout .nav-item span {
-                display: none;
-            }
-            .brand { justify-content: center; padding: 5px 0 25px; }
-            .nav-item { justify-content: center; padding: 13px 5px; }
-            .main { margin-left: 70px; }
-            .topbar { padding: 0 20px; }
-            .content { padding: 20px; }
-            .profile-info, .engine-status { display: none; }
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .search-box { max-width: none; }
-            .filter-group { width: 100%; }
-            .filter { flex: 1; }
-        }
 
-        @media (max-width: 550px) {
-            .stats { grid-template-columns: 1fr; }
-            .heading-row { flex-direction: column; align-items: flex-start; }
-            .content { padding: 15px; }
-            .filter-group { flex-direction: column; }
-            .detail-grid { grid-template-columns: 1fr; }
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .topbar,
+            .panel-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
+
+
 <body>
 
-<aside class="sidebar">
-    <div class="brand">
-        <div class="brand-icon">AI</div>
-        <div class="brand-text">
-            <h2>CV SCREEN</h2>
-            <span>RECRUITMENT INTELLIGENCE</span>
+<div class="layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-title">
+                CV SCREEN AI
+            </div>
+
+            <div class="brand-subtitle">
+                INTELLIGENT RECRUITMENT PLATFORM
+            </div>
+
         </div>
-    </div>
 
-    <div class="menu-title">Workspace</div>
 
-    <a href="/dashboard" class="nav-item">
-        <div class="nav-icon">⌂</div>
-        <span>Dashboard</span>
-    </a>
+        <div class="nav-label">
+            MAIN MENU
+        </div>
 
-    <a href="/candidates" class="nav-item active">
-        <div class="nav-icon">♙</div>
-        <span>Candidates</span>
-    </a>
 
-    <a href="/jobs" class="nav-item">
-        <div class="nav-icon">▣</div>
-        <span>Jobs</span>
-    </a>
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">▦</span>
+            <span>Dashboard</span>
+        </a>
 
-    <a href="/upload-cv" class="nav-item">
-        <div class="nav-icon">◉</div>
-        <span>Screening</span>
-    </a>
 
-    <a href="/reports" class="nav-item">
-        <div class="nav-icon">▤</div>
-        <span>Reports</span>
-    </a>
+        <a
+            href="{{ url_for('candidates') }}"
+            class="nav-item active"
+        >
+            <span class="nav-icon">◉</span>
+            <span>Candidates</span>
+        </a>
 
-    <div class="menu-title">System</div>
 
-    <a href="/settings" class="nav-item">
-        <div class="nav-icon">⚙</div>
-        <span>Settings</span>
-    </a>
+        <a
+            href="{{ url_for('jobs') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">▤</span>
+            <span>Jobs</span>
+        </a>
 
-    <div class="logout">
-        <a href="/logout" class="nav-item">
-            <div class="nav-icon">⇥</div>
+
+        <a
+            href="{{ url_for('screening') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">✦</span>
+            <span>AI Screening</span>
+        </a>
+
+
+        <a
+            href="{{ url_for('reports') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">▥</span>
+            <span>Reports</span>
+        </a>
+
+
+        <a
+            href="{{ url_for('settings') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">⚙</span>
+            <span>Settings</span>
+        </a>
+
+
+        <div style="height: 22px;"></div>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">↪</span>
             <span>Logout</span>
         </a>
-    </div>
-</aside>
 
-<main class="main">
-    <header class="topbar">
-        <div class="page-title">
-            <h1>Candidate Intelligence</h1>
-            <p>Recruitment Intelligence / Candidates</p>
-        </div>
+    </aside>
 
-        <div class="top-right">
-            <div class="engine-status">
-                <div class="engine-dot"></div>
-                AI Engine Online
-            </div>
 
-            <div class="profile">
-                <div class="profile-avatar">AD</div>
-                <div class="profile-info">
-                    <strong>Admin</strong>
-                    <span>System Administrator</span>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <section class="content">
-        <div class="heading-row">
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main">
+
+
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
+
+        <div class="topbar">
+
             <div>
-                <h2>Candidates</h2>
-                <p>Manage, review and analyze applicants using AI-powered recruitment intelligence.</p>
+
+                <div class="eyebrow">
+                    RECRUITMENT INTELLIGENCE
+                </div>
+
+                <div class="page-title">
+                    Candidates
+                </div>
+
+                <div class="page-subtitle">
+                    Review candidates, inspect AI scores and rescreen stored CVs.
+                </div>
+
             </div>
-            <a href="/upload-cv" class="add-btn">+ Upload CV</a>
+
+
+            <div class="top-actions">
+
+                <a
+                    href="{{ url_for('screening') }}"
+                    class="btn"
+                >
+                    ✦ AI Screening
+                </a>
+
+
+                <a
+                    href="{{ url_for('upload_cv') }}"
+                    class="btn btn-primary"
+                >
+                    + Upload CV
+                </a>
+
+            </div>
+
         </div>
 
-        <!-- STATISTICS -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-label">Total Candidates</div>
-                <div class="stat-value" id="totalCandidates">0</div>
-                <div class="stat-description" id="totalDescription">Candidate records</div>
+
+
+        <!-- =================================================
+             SUMMARY CARDS
+        ================================================== -->
+
+        {% set total_candidates = candidates|length %}
+
+        {% set screened_count =
+            candidates
+            |selectattr('status', 'equalto', 'Screened')
+            |list
+            |length
+        %}
+
+        {% set pending_count =
+            candidates
+            |selectattr('status', 'equalto', 'Pending')
+            |list
+            |length
+        %}
+
+
+        <div class="summary-grid">
+
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Candidates
+                </div>
+
+                <div class="summary-value">
+                    {{ total_candidates }}
+                </div>
+
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Screened</div>
-                <div class="stat-value" id="screenedCandidates">0</div>
-                <div class="stat-description" id="screenedDescription">AI screening activity</div>
+
+
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Screened
+                </div>
+
+                <div class="summary-value">
+                    {{ screened_count }}
+                </div>
+
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Shortlisted</div>
-                <div class="stat-value" id="shortlistedCandidates">0</div>
-                <div class="stat-description" id="shortlistedDescription">Candidates shortlisted</div>
+
+
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Pending
+                </div>
+
+                <div class="summary-value">
+                    {{ pending_count }}
+                </div>
+
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Average Match</div>
-                <div class="stat-value" id="averageMatch">0%</div>
-                <div class="stat-description green">AI match score</div>
+
+
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    AI Engine
+                </div>
+
+                <div
+                    class="summary-value"
+                    style="color:#4ade80;"
+                >
+                    READY
+                </div>
+
             </div>
+
         </div>
 
-        <!-- TOOLBAR -->
-        <div class="toolbar">
-            <div class="search-box">
-                <span class="search-icon">⌕</span>
-                <input type="text" id="candidateSearch" placeholder="Search by name, email, position or skill..." autocomplete="off">
+
+
+        <!-- =================================================
+             CANDIDATES PANEL
+        ================================================== -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="panel-title">
+                        Candidate Intelligence
+                    </div>
+
+                    <div class="panel-subtitle">
+                        Rescreen runs the AI engine again using the candidate's stored CV.
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('upload_cv') }}"
+                    class="btn"
+                >
+                    Upload New Candidate
+                </a>
+
             </div>
 
-            <div class="filter-group">
-                <select id="statusFilter" class="filter">
-                    <option value="all">All Status</option>
-                    <option value="screened">Screened</option>
-                    <option value="shortlisted">Shortlisted</option>
-                    <option value="review">Review</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="pending">Pending</option>
-                </select>
 
-                <select id="positionFilter" class="filter">
-                    <option value="all">All Positions</option>
-                </select>
-            </div>
-        </div>
 
-        <!-- TABLE -->
-        <div class="table-card">
-            <div class="table-header">
-                <h3>Candidate Database</h3>
-                <span id="candidateCount">Loading candidates...</span>
-            </div>
+            {% if candidates %}
+
 
             <div class="table-wrapper">
+
                 <table>
+
+
                     <thead>
+
                         <tr>
-                            <th>Candidate</th>
-                            <th>Position</th>
-                            <th>Skills</th>
-                            <th>Match Score</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+
+                            <th>
+                                Candidate
+                            </th>
+
+                            <th>
+                                Target Position
+                            </th>
+
+                            <th>
+                                Job Profile
+                            </th>
+
+                            <th>
+                                Match Score
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Recommendation
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
                         </tr>
+
                     </thead>
-                    <tbody id="candidateTable">
-                        <tr class="state-row">
-                            <td colspan="6">
-                                <div class="state-box">
-                                    <div class="loading-spinner"></div>
-                                    <strong>Loading candidate records</strong>
-                                    <span>Connecting to recruitment database...</span>
+
+
+
+                    <tbody>
+
+
+                    {% for candidate in candidates %}
+
+
+                        {% set candidate_id =
+                            candidate.get('id')
+                        %}
+
+
+                        {% set score =
+                            candidate.get('match_score', 0)
+                            or 0
+                        %}
+
+
+                        {% set candidate_status =
+                            candidate.get('status', 'Pending')
+                            or 'Pending'
+                        %}
+
+
+                        <tr>
+
+
+                            <!-- CANDIDATE -->
+
+                            <td>
+
+                                <div class="candidate-name">
+
+                                    {{
+                                        candidate.get(
+                                            'full_name',
+                                            'Unknown Candidate'
+                                        )
+                                    }}
+
                                 </div>
+
+
+                                <div class="candidate-email">
+
+                                    {{
+                                        candidate.get(
+                                            'email',
+                                            'No email provided'
+                                        )
+                                    }}
+
+                                </div>
+
                             </td>
+
+
+
+                            <!-- POSITION -->
+
+                            <td class="candidate-position">
+
+                                {{
+                                    candidate.get(
+                                        'target_position',
+                                        'Not specified'
+                                    )
+                                }}
+
+                            </td>
+
+
+
+                            <!-- JOB PROFILE -->
+
+                            <td class="candidate-position">
+
+                                {{
+                                    candidate.get(
+                                        'job_profile',
+                                        'Not assigned'
+                                    )
+                                }}
+
+                            </td>
+
+
+
+                            <!-- MATCH SCORE -->
+
+                            <td>
+
+                                {% if score|float > 0 %}
+
+                                    <span class="score">
+
+                                        {{
+                                            "%.1f"
+                                            |format(score|float)
+                                        }}%
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="score pending">
+                                        Pending
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if candidate_status|lower == 'screened' %}
+
+                                    <span
+                                        class="status status-screened"
+                                    >
+                                        Screened
+                                    </span>
+
+                                {% elif candidate_status|lower == 'pending' %}
+
+                                    <span
+                                        class="status status-pending"
+                                    >
+                                        Pending
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="status status-other"
+                                    >
+
+                                        {{
+                                            candidate_status
+                                        }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- RECOMMENDATION -->
+
+                            <td>
+
+                                {{
+                                    candidate.get(
+                                        'recommendation',
+                                        'Not available'
+                                    )
+                                    or
+                                    'Not available'
+                                }}
+
+                            </td>
+
+
+
+                            <!-- ACTIONS -->
+
+                            <td>
+
+                                <div class="row-actions">
+
+
+                                    <!-- VIEW RESULTS -->
+
+                                    <a
+                                        href="{{
+                                            url_for(
+                                                'results',
+                                                candidate_id=candidate_id
+                                            )
+                                        }}"
+                                        class="action-btn"
+                                    >
+                                        View Results
+                                    </a>
+
+
+
+                                    <!-- RESCREEN -->
+
+                                    <button
+                                        type="button"
+                                        class="action-btn rescreen"
+                                        data-candidate-id="{{
+                                            candidate_id
+                                        }}"
+                                        data-candidate-name="{{
+                                            candidate.get(
+                                                'full_name',
+                                                'Candidate'
+                                            )
+                                        }}"
+                                        onclick="rescreenCandidate(this)"
+                                    >
+
+                                        ↻ Rescreen
+
+                                    </button>
+
+
+                                </div>
+
+                            </td>
+
+
                         </tr>
+
+
+                    {% endfor %}
+
+
                     </tbody>
+
                 </table>
+
             </div>
 
-            <div class="pagination">
-                <div class="pagination-info" id="paginationInfo">Showing 0 candidates</div>
-                <div class="pages" id="paginationPages"></div>
+
+            {% else %}
+
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ◉
+                </div>
+
+                <h3>
+                    No candidates yet
+                </h3>
+
+                <p>
+                    Upload a CV to create your first candidate.
+                </p>
+
+
+                <a
+                    href="{{ url_for('upload_cv') }}"
+                    class="btn btn-primary"
+                >
+                    + Upload First CV
+                </a>
+
             </div>
-        </div>
-    </section>
-</main>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="candidateModal">
-    <div class="modal">
-        <div class="modal-head">
-            <h3>Candidate Profile</h3>
-            <button class="close-btn" onclick="closeCandidateModal()">×</button>
-        </div>
 
-        <div class="modal-body">
-            <div class="detail-header">
-                <div class="detail-avatar" id="modalAvatar">--</div>
-                <div>
-                    <strong id="modalName">Candidate</strong>
-                    <span id="modalEmail">—</span>
-                </div>
-            </div>
+            {% endif %}
 
-            <div class="detail-grid">
-                <div class="detail-card">
-                    <div class="detail-label">Position</div>
-                    <div class="detail-value" id="modalPosition">—</div>
-                </div>
-                <div class="detail-card">
-                    <div class="detail-label">Status</div>
-                    <div class="detail-value" id="modalStatus">—</div>
-                </div>
-                <div class="detail-card">
-                    <div class="detail-label">Match Score</div>
-                    <div class="detail-value" id="modalScore">—</div>
-                </div>
-                <div class="detail-card">
-                    <div class="detail-label">CV Status</div>
-                    <div class="detail-value" id="modalCV">—</div>
-                </div>
-                <div class="detail-card full">
-                    <div class="detail-label">Skills</div>
-                    <div class="detail-value" id="modalSkills">—</div>
-                </div>
-                <div class="detail-card full">
-                    <div class="detail-label">Candidate ID</div>
-                    <div class="detail-value" id="modalId">—</div>
-                </div>
-            </div>
-        </div>
 
-        <div class="modal-footer">
-            <a href="/results" id="modalResultsLink" class="action-btn results-btn">View Results</a>
-            <button class="action-btn" onclick="closeCandidateModal()">Close</button>
-        </div>
-    </div>
+        </section>
+
+
+    </main>
+
 </div>
 
+
+
+<!-- =========================================================
+     AI RESCREENING OVERLAY
+========================================================= -->
+
+<div
+    class="screening-overlay"
+    id="screeningOverlay"
+>
+
+
+    <div class="screening-box">
+
+
+        <div class="spinner"></div>
+
+
+        <h2 id="screeningTitle">
+            AI Rescreening in Progress
+        </h2>
+
+
+        <p id="screeningMessage">
+
+            The AI engine is extracting the CV,
+            checking requirements, recalculating the
+            match score and updating the candidate results.
+
+        </p>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     ERROR MESSAGE
+========================================================= -->
+
+<div
+    class="error-message"
+    id="errorMessage"
+></div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
 <script>
-    let allCandidates = [];
-    let filteredCandidates = [];
-    let currentPage = 1;
-    const rowsPerPage = 8;
 
-    function normalizeCandidate(item) {
-        if (!item || typeof item !== "object") return {};
 
-        const name = item.full_name || item.name || item.candidate_name || "Unnamed Candidate";
-        const email = item.email || item.email_address || "No email available";
-        const position = item.target_position || item.position || item.job_title || "Not assigned";
+/*
+=============================================================
+SHOW ERROR
+=============================================================
+*/
 
-        let skills = item.skills || item.skill_set || "";
-        if (Array.isArray(skills)) skills = skills.join(", ");
-        if (typeof skills === "object" && skills !== null) skills = Object.values(skills).join(", ");
+function showError(message) {
 
-        let score = parseFloat(item.match_score ?? item.score ?? item.overall_score ?? 0);
-        if (isNaN(score)) score = 0;
-        if (score > 0 && score <= 1) score = score * 100;
-        score = Math.max(0, Math.min(100, Math.round(score)));
+    const errorBox =
+        document.getElementById("errorMessage");
 
-        let status = String(item.status || "pending").toLowerCase().trim();
-        if (status === "shortlisted" || status === "shortlist") status = "shortlisted";
-        else if (status === "rejected" || status === "reject") status = "rejected";
-        else if (status === "review" || status === "under review") status = "review";
-        else if (status === "screened" || status === "screening" || status === "processed") status = "screened";
-        else status = "pending";
 
-        const id = item.id || item.candidate_id || "";
+    errorBox.textContent =
+        message;
 
-        return {
-            id: id,
-            name: String(name),
-            email: String(email),
-            position: String(position),
-            skills: String(skills || ""),
-            score: score,
-            status: status,
-            cvUploaded: Boolean(item.cv_uploaded)
-        };
+
+    errorBox.classList.add("show");
+
+
+    setTimeout(function () {
+
+        errorBox.classList.remove("show");
+
+    }, 5000);
+
+}
+
+
+
+/*
+=============================================================
+RESCREEN CANDIDATE
+=============================================================
+*/
+
+async function rescreenCandidate(button) {
+
+
+    /*
+    ---------------------------------------------------------
+    GET CANDIDATE INFORMATION
+    ---------------------------------------------------------
+    */
+
+    const candidateId =
+        button.dataset.candidateId;
+
+
+    const candidateName =
+        button.dataset.candidateName ||
+        "Candidate";
+
+
+
+    /*
+    ---------------------------------------------------------
+    VALIDATE CANDIDATE ID
+    ---------------------------------------------------------
+    */
+
+    if (!candidateId) {
+
+        showError(
+            "Candidate ID is missing. This candidate cannot be rescreened."
+        );
+
+        return;
     }
 
-    async function loadCandidates() {
+
+
+    /*
+    ---------------------------------------------------------
+    CONFIRM ACTION
+    ---------------------------------------------------------
+    */
+
+    const confirmed =
+        confirm(
+            "Rescreen " +
+            candidateName +
+            " using the latest AI screening engine?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+    }
+
+
+
+    /*
+    ---------------------------------------------------------
+    SHOW SCREENING OVERLAY
+    ---------------------------------------------------------
+    */
+
+    const overlay =
+        document.getElementById(
+            "screeningOverlay"
+        );
+
+
+    const title =
+        document.getElementById(
+            "screeningTitle"
+        );
+
+
+    const message =
+        document.getElementById(
+            "screeningMessage"
+        );
+
+
+    overlay.classList.add("show");
+
+
+    title.textContent =
+        "Rescreening " +
+        candidateName;
+
+
+    message.textContent =
+        "Please wait while the AI engine re-analyzes the stored CV and generates an updated screening result.";
+
+
+
+    /*
+    ---------------------------------------------------------
+    DISABLE BUTTON
+    ---------------------------------------------------------
+    */
+
+    button.disabled =
+        true;
+
+
+    const originalButtonText =
+        button.innerHTML;
+
+
+    button.innerHTML =
+        "⟳ Screening...";
+
+
+
+    /*
+    ---------------------------------------------------------
+    CALL EXISTING FLASK API
+    ---------------------------------------------------------
+
+    This connects to:
+
+        /api/screen/<candidate_id>
+
+    Your existing app.py already has this endpoint.
+    ---------------------------------------------------------
+    */
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/api/screen/" +
+                encodeURIComponent(
+                    candidateId
+                ),
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+
+
+        /*
+        -----------------------------------------------------
+        READ SERVER RESPONSE
+        -----------------------------------------------------
+        */
+
+        let data;
+
+
         try {
-            const response = await fetch("/api/candidates", {
-                method: "GET",
-                headers: { "Accept": "application/json" }
-            });
 
-            if (!response.ok) throw new Error("API error");
+            data =
+                await response.json();
 
-            const data = await response.json();
-            let rawCandidates = [];
-
-            if (Array.isArray(data)) rawCandidates = data;
-            else if (Array.isArray(data.candidates)) rawCandidates = data.candidates;
-            else if (Array.isArray(data.data)) rawCandidates = data.data;
-
-            allCandidates = rawCandidates.map(normalizeCandidate).filter(c => c.name && c.name !== "Unnamed Candidate");
-            filteredCandidates = [...allCandidates];
-
-            populatePositionFilter();
-            updateStatistics();
-            renderCandidates();
-        } catch (error) {
-            console.error(error);
-            allCandidates = [];
-            filteredCandidates = [];
-            updateStatistics();
-
-            document.getElementById("candidateTable").innerHTML = `
-                <tr class="state-row">
-                    <td colspan="6">
-                        <div class="state-box">
-                            <div class="state-icon">!</div>
-                            <strong>Unable to load candidates</strong>
-                            <span>Check the Flask terminal for errors.</span>
-                        </div>
-                    </td>
-                </tr>`;
-        }
-    }
-
-    function populatePositionFilter() {
-        const select = document.getElementById("positionFilter");
-        const positions = [...new Set(allCandidates.map(c => c.position).filter(p => p && p !== "Not assigned"))].sort();
-
-        select.innerHTML = `<option value="all">All Positions</option>`;
-        positions.forEach(position => {
-            const option = document.createElement("option");
-            option.value = position.toLowerCase();
-            option.textContent = position;
-            select.appendChild(option);
-        });
-    }
-
-    function updateStatistics() {
-        const total = allCandidates.length;
-        const screened = allCandidates.filter(c => ["screened","shortlisted","review","rejected"].includes(c.status)).length;
-        const shortlisted = allCandidates.filter(c => c.status === "shortlisted").length;
-        const scores = allCandidates.map(c => c.score).filter(s => s > 0);
-        const average = scores.length > 0 ? Math.round(scores.reduce((a,b) => a+b, 0) / scores.length) : 0;
-
-        document.getElementById("totalCandidates").textContent = total;
-        document.getElementById("screenedCandidates").textContent = screened;
-        document.getElementById("shortlistedCandidates").textContent = shortlisted;
-        document.getElementById("averageMatch").textContent = average + "%";
-
-        document.getElementById("totalDescription").textContent = total === 1 ? "1 candidate record" : total + " candidate records";
-        document.getElementById("screenedDescription").textContent = total > 0 ? Math.round((screened/total)*100) + "% processed" : "No screening activity";
-        document.getElementById("shortlistedDescription").textContent = total > 0 ? Math.round((shortlisted/total)*100) + "% of candidates" : "No shortlisted candidates";
-    }
-
-    function applyFilters() {
-        const search = document.getElementById("candidateSearch").value.toLowerCase().trim();
-        const status = document.getElementById("statusFilter").value;
-        const position = document.getElementById("positionFilter").value;
-
-        filteredCandidates = allCandidates.filter(c => {
-            const text = (c.name + " " + c.email + " " + c.position + " " + c.skills).toLowerCase();
-            const matchSearch = !search || text.includes(search);
-            const matchStatus = status === "all" || c.status === status;
-            const matchPosition = position === "all" || c.position.toLowerCase() === position;
-            return matchSearch && matchStatus && matchPosition;
-        });
-
-        currentPage = 1;
-        renderCandidates();
-    }
-
-    function renderCandidates() {
-        const table = document.getElementById("candidateTable");
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const pageCandidates = filteredCandidates.slice(start, end);
-
-        if (filteredCandidates.length === 0) {
-            table.innerHTML = `
-                <tr class="state-row">
-                    <td colspan="6">
-                        <div class="state-box">
-                            <div class="state-icon">⌕</div>
-                            <strong>No candidates found</strong>
-                            <span>Try changing your search or filter settings.</span>
-                        </div>
-                    </td>
-                </tr>`;
-            document.getElementById("candidateCount").textContent = "0 candidates";
-            document.getElementById("paginationInfo").textContent = "Showing 0 candidates";
-            renderPagination();
-            return;
         }
 
-        table.innerHTML = pageCandidates.map(c => candidateRow(c)).join("");
-        document.getElementById("candidateCount").textContent = filteredCandidates.length === 1 ? "1 candidate found" : filteredCandidates.length + " candidates found";
-        document.getElementById("paginationInfo").textContent = `Showing ${start+1}–${Math.min(end, filteredCandidates.length)} of ${filteredCandidates.length} candidates`;
-        renderPagination();
+        catch (jsonError) {
 
-        // Set progress bar widths
-        document.querySelectorAll(".mini-progress-bar[data-width]").forEach(bar => {
-            bar.style.width = (bar.getAttribute("data-width") || 0) + "%";
-        });
-    }
+            throw new Error(
+                "The server returned an invalid response."
+            );
 
-    function candidateRow(c) {
-        const initials = getInitials(c.name);
-        let scoreClass = "";
-        if (c.score < 60) scoreClass = "low";
-        else if (c.score < 75) scoreClass = "medium";
-
-        const skills = splitSkills(c.skills);
-        const skillHTML = skills.length > 0
-            ? skills.slice(0, 4).map(s => `<span class="skill-chip">${escapeHTML(s)}</span>`).join("")
-            : `<span style="color:#58758d;font-size:10px;">No skills</span>`;
-
-        return `
-            <tr>
-                <td>
-                    <div class="candidate">
-                        <div class="candidate-avatar">${escapeHTML(initials)}</div>
-                        <div class="candidate-info">
-                            <strong>${escapeHTML(c.name)}</strong>
-                            <span>${escapeHTML(c.email)}</span>
-                        </div>
-                    </div>
-                </td>
-                <td>${escapeHTML(c.position)}</td>
-                <td><div class="skills-list">${skillHTML}</div></td>
-                <td>
-                    <div class="match-wrap">
-                        <a href="/results/${c.id}" class="match-score ${scoreClass}">${c.score}%</a>
-                        <div class="mini-progress">
-                            <div class="mini-progress-bar" data-width="${c.score}"></div>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="status ${c.status}">${formatStatus(c.status)}</span></td>
-                <td>
-                    <div class="actions">
-                        <button type="button" class="action-btn" onclick="openCandidateModalById('${c.id}')">View</button>
-                        <a href="/results/${c.id}" class="action-btn results-btn">Results</a>
-                        <button type="button" class="action-btn shortlist-btn" onclick="shortlistCandidate('${c.id}')">Shortlist</button>
-                    </div>
-                </td>
-            </tr>`;
-    }
-
-    function renderPagination() {
-        const container = document.getElementById("paginationPages");
-        const totalPages = Math.ceil(filteredCandidates.length / rowsPerPage);
-        if (totalPages <= 1) {
-            container.innerHTML = "";
-            return;
         }
 
-        let html = `<div class="page ${currentPage===1?'disabled':''}" onclick="changePage(${currentPage-1})">‹</div>`;
-        for (let p = 1; p <= totalPages; p++) {
-            html += `<div class="page ${p===currentPage?'active':''}" onclick="changePage(${p})">${p}</div>`;
+
+
+        /*
+        -----------------------------------------------------
+        CHECK SCREENING RESULT
+        -----------------------------------------------------
+        */
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "AI rescreening failed."
+            );
+
         }
-        html += `<div class="page ${currentPage===totalPages?'disabled':''}" onclick="changePage(${currentPage+1})">›</div>`;
-        container.innerHTML = html;
+
+
+
+        /*
+        -----------------------------------------------------
+        SCREENING SUCCESS
+        -----------------------------------------------------
+        */
+
+        title.textContent =
+            "Rescreening Complete";
+
+
+        message.textContent =
+            "The candidate has been successfully rescreened. Opening the updated AI results...";
+
+
+
+        /*
+        -----------------------------------------------------
+        OPEN UPDATED RESULTS
+        -----------------------------------------------------
+        */
+
+        setTimeout(function () {
+
+
+            if (data.results_url) {
+
+                window.location.href =
+                    data.results_url;
+
+            }
+
+            else {
+
+                window.location.href =
+                    "/results/" +
+                    candidateId;
+
+            }
+
+
+        }, 800);
+
+
     }
 
-    function changePage(page) {
-        const totalPages = Math.ceil(filteredCandidates.length / rowsPerPage);
-        if (page < 1 || page > totalPages) return;
-        currentPage = page;
-        renderCandidates();
+
+    /*
+    ---------------------------------------------------------
+    HANDLE ERRORS
+    ---------------------------------------------------------
+    */
+
+    catch (error) {
+
+
+        console.error(
+            "AI Rescreening Error:",
+            error
+        );
+
+
+        /*
+        Hide loading screen
+        */
+
+        overlay.classList.remove(
+            "show"
+        );
+
+
+        /*
+        Restore button
+        */
+
+        button.disabled =
+            false;
+
+
+        button.innerHTML =
+            originalButtonText;
+
+
+        /*
+        Show error
+        */
+
+        showError(
+            error.message ||
+            "Unable to rescreen this candidate."
+        );
+
     }
 
-    function openCandidateModalById(id) {
-        const candidate = filteredCandidates.find(c => String(c.id) === String(id));
-        if (!candidate) return;
+}
 
-        document.getElementById("modalAvatar").textContent = getInitials(candidate.name);
-        document.getElementById("modalName").textContent = candidate.name;
-        document.getElementById("modalEmail").textContent = candidate.email;
-        document.getElementById("modalPosition").textContent = candidate.position;
-        document.getElementById("modalStatus").textContent = formatStatus(candidate.status);
-        document.getElementById("modalScore").textContent = candidate.score + "%";
-        document.getElementById("modalCV").textContent = candidate.cvUploaded ? "CV available" : "CV not uploaded";
-        document.getElementById("modalSkills").textContent = candidate.skills || "No skills recorded";
-        document.getElementById("modalId").textContent = candidate.id || "Not available";
-        document.getElementById("modalResultsLink").href = "/results/" + candidate.id;
 
-        document.getElementById("candidateModal").classList.add("show");
-    }
-
-    function closeCandidateModal() {
-        document.getElementById("candidateModal").classList.remove("show");
-    }
-
-    function shortlistCandidate(id) {
-        alert("Shortlist feature will update the candidate status to 'Shortlisted'.\n\nCandidate ID: " + id + "\n\n(This can be connected to the backend later)");
-    }
-
-    function getInitials(name) {
-        const parts = String(name).trim().split(/\s+/).filter(Boolean);
-        if (parts.length === 0) return "--";
-        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-
-    function splitSkills(skills) {
-        if (!skills) return [];
-        return String(skills).split(/[,|;/]+/).map(s => s.trim()).filter(Boolean);
-    }
-
-    function formatStatus(value) {
-        const labels = {
-            screened: "Screened",
-            shortlisted: "Shortlisted",
-            review: "Review",
-            rejected: "Rejected",
-            pending: "Pending"
-        };
-        return labels[value] || value;
-    }
-
-    function escapeHTML(value) {
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-    document.getElementById("candidateSearch").addEventListener("input", applyFilters);
-    document.getElementById("statusFilter").addEventListener("change", applyFilters);
-    document.getElementById("positionFilter").addEventListener("change", applyFilters);
-
-    document.getElementById("candidateModal").addEventListener("click", function(e) {
-        if (e.target === this) closeCandidateModal();
-    });
-
-    document.addEventListener("keydown", function(e) {
-        if (e.key === "Escape") closeCandidateModal();
-    });
-
-    document.addEventListener("DOMContentLoaded", loadCandidates);
 </script>
+
 
 </body>
 </html>

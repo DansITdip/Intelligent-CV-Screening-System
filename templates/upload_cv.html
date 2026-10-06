@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload CV | AI CV Screen Recruitment Intelligence</title>
+
+    <title>Upload CV | AI CV Screen</title>
 
     <style>
         * {
@@ -12,26 +13,13 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --bg: #07111f;
-            --sidebar: #0a1627;
-            --panel: #0d1c30;
-            --panel-2: #11243d;
-            --border: rgba(120, 170, 220, 0.15);
-            --text: #eef6ff;
-            --muted: #8ca4bd;
-            --cyan: #19d3ff;
-            --cyan-dark: #0da7cc;
-            --green: #28d17c;
-            --yellow: #ffc857;
-            --red: #ff5d6c;
-            --shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
-        }
-
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: "Inter", "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(0, 174, 255, 0.10), transparent 30%),
+                radial-gradient(circle at bottom left, rgba(0, 102, 255, 0.08), transparent 30%),
+                #07111f;
+            color: #e8f0f8;
             min-height: 100vh;
         }
 
@@ -40,183 +28,168 @@
             color: inherit;
         }
 
-        button,
-        input,
-        select {
-            font-family: inherit;
-        }
+        /* =========================
+           TOP NAVIGATION
+        ========================= */
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
+        .topbar {
+            height: 72px;
+            background: rgba(7, 17, 31, 0.96);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 250px;
-            height: 100vh;
-            background: var(--sidebar);
-            border-right: 1px solid var(--border);
-            padding: 22px 16px;
-            z-index: 100;
+            z-index: 1000;
+            backdrop-filter: blur(14px);
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 5px 10px 28px;
         }
 
         .brand-icon {
             width: 42px;
             height: 42px;
             border-radius: 12px;
-            background: linear-gradient(135deg, var(--cyan), #497cff);
+            background: linear-gradient(135deg, #087cff, #00d4ff);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #04101b;
             font-size: 20px;
             font-weight: 800;
-            box-shadow: 0 10px 25px rgba(25, 211, 255, 0.18);
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 174, 255, 0.25);
         }
 
-        .brand-text h2 {
-            font-size: 15px;
-            letter-spacing: 0.8px;
-            line-height: 1.2;
+        .brand-text h1 {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
 
         .brand-text span {
+            display: block;
             font-size: 10px;
-            color: var(--cyan);
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
-        }
-
-        .menu-title {
-            color: #66819d;
-            font-size: 10px;
-            font-weight: 700;
+            color: #7f93a8;
             letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 14px 12px 9px;
+            margin-top: 2px;
         }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            padding: 12px 13px;
-            border-radius: 10px;
-            margin-bottom: 4px;
-            color: #8ea8c2;
-            font-size: 14px;
-            transition: 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background: rgba(25, 211, 255, 0.07);
-            color: var(--text);
-        }
-
-        .nav-item.active {
-            background: linear-gradient(
-                90deg,
-                rgba(25, 211, 255, 0.16),
-                rgba(25, 211, 255, 0.04)
-            );
-            color: #ffffff;
-            border-left: 3px solid var(--cyan);
-            padding-left: 10px;
-        }
-
-        .nav-icon {
-            width: 22px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .sidebar-bottom {
-            position: absolute;
-            left: 16px;
-            right: 16px;
-            bottom: 18px;
-        }
-
-        .system-status {
-            background: rgba(40, 209, 124, 0.07);
-            border: 1px solid rgba(40, 209, 124, 0.15);
-            border-radius: 12px;
-            padding: 13px;
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            margin-bottom: 12px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 12px rgba(40, 209, 124, 0.7);
-        }
-
-        .system-status span {
-            font-size: 12px;
-            color: #b0c5d8;
-        }
-
-        /* MAIN */
-        .main {
-            margin-left: 250px;
-            min-height: 100vh;
-        }
-
-        .topbar {
-            height: 74px;
-            padding: 0 30px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(7, 17, 31, 0.86);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .page-heading h1 {
-            font-size: 22px;
-            margin-bottom: 4px;
-        }
-
-        .page-heading p {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .topbar-right {
+        .top-actions {
             display: flex;
             align-items: center;
             gap: 14px;
         }
 
-        .version {
-            font-size: 11px;
-            color: var(--muted);
-            padding: 7px 10px;
-            border: 1px solid var(--border);
+        .top-link {
+            color: #91a5b9;
+            font-size: 14px;
+            padding: 9px 13px;
             border-radius: 8px;
+            transition: 0.2s;
         }
 
-        .profile {
+        .top-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .user-badge {
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #19d3ff, #566fff);
-            color: #04101b;
+            background: linear-gradient(135deg, #1769ff, #00bcd4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page {
+            width: min(1180px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 42px 0 70px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .breadcrumb {
+            color: #6f8499;
+            font-size: 13px;
+            margin-bottom: 13px;
+        }
+
+        .breadcrumb span {
+            color: #00c8ff;
+        }
+
+        .page-header h2 {
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #8fa3b7;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .screen-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            background: rgba(12, 27, 44, 0.90);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .main-card {
+            padding: 30px;
+        }
+
+        .side-card {
+            padding: 25px;
+        }
+
+        /* =========================
+           SECTION HEADERS
+        ========================= */
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .section-number {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: rgba(0, 174, 255, 0.12);
+            color: #00c8ff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -224,104 +197,64 @@
             font-size: 13px;
         }
 
-        .content {
-            padding: 30px;
-            max-width: 1500px;
+        .section-title h3 {
+            font-size: 17px;
+            font-weight: 750;
         }
 
-        /* PAGE GRID */
-        .upload-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.9fr);
-            gap: 22px;
-        }
-
-        .card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-        }
-
-        .card-header {
-            padding: 20px 22px 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .card-header h2 {
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-
-        .card-header p {
-            color: var(--muted);
+        .section-title p {
+            color: #70869b;
             font-size: 12px;
-            line-height: 1.5;
+            margin-top: 3px;
         }
 
-        .card-body {
-            padding: 22px;
-        }
+        /* =========================
+           UPLOAD AREA
+        ========================= */
 
-        /* UPLOAD BOX */
         .drop-zone {
-            border: 1.5px dashed rgba(25, 211, 255, 0.4);
+            border: 1.5px dashed rgba(0, 200, 255, 0.40);
             border-radius: 15px;
-            background: rgba(25, 211, 255, 0.035);
-            min-height: 265px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 38px 25px;
             text-align: center;
-            padding: 30px;
+            background: rgba(0, 174, 255, 0.035);
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: 0.25s;
         }
 
         .drop-zone:hover,
         .drop-zone.dragover {
-            border-color: var(--cyan);
-            background: rgba(25, 211, 255, 0.08);
+            border-color: #00c8ff;
+            background: rgba(0, 174, 255, 0.08);
             transform: translateY(-1px);
         }
 
-        .upload-content {
-            max-width: 440px;
-        }
-
         .upload-icon {
-            width: 68px;
-            height: 68px;
+            width: 58px;
+            height: 58px;
             margin: 0 auto 15px;
-            border-radius: 18px;
+            border-radius: 16px;
+            background: rgba(0, 174, 255, 0.12);
+            color: #00c8ff;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(25, 211, 255, 0.11);
-            border: 1px solid rgba(25, 211, 255, 0.18);
-            font-size: 28px;
+            font-size: 26px;
         }
 
-        .upload-content h3 {
-            font-size: 17px;
+        .drop-zone h4 {
+            font-size: 16px;
             margin-bottom: 7px;
         }
 
-        .upload-content p {
-            color: var(--muted);
-            font-size: 12px;
+        .drop-zone p {
+            color: #71869a;
+            font-size: 13px;
             line-height: 1.6;
         }
 
-        .browse-btn {
-            display: inline-flex;
-            margin-top: 16px;
-            padding: 10px 18px;
-            border-radius: 9px;
-            background: rgba(25, 211, 255, 0.11);
-            border: 1px solid rgba(25, 211, 255, 0.28);
-            color: var(--cyan);
-            font-size: 12px;
+        .browse {
+            color: #00c8ff;
             font-weight: 700;
         }
 
@@ -329,21 +262,20 @@
             display: none;
         }
 
-        /* FILE PREVIEW */
+        /* =========================
+           FILE PREVIEW
+        ========================= */
+
         .file-preview {
             display: none;
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid rgba(0, 200, 255, 0.18);
+            background: rgba(0, 174, 255, 0.05);
+            border-radius: 12px;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
-            padding: 14px 16px;
-            margin-top: 16px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--panel-2);
-        }
-
-        .file-preview.show {
-            display: flex;
+            gap: 12px;
         }
 
         .file-info {
@@ -357,522 +289,475 @@
             width: 42px;
             height: 42px;
             border-radius: 10px;
-            background: rgba(255, 92, 108, 0.1);
+            background: rgba(0, 200, 255, 0.12);
+            color: #00c8ff;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ff707f;
-            font-size: 17px;
-            flex-shrink: 0;
+            font-weight: 800;
         }
 
         .file-details {
             min-width: 0;
         }
 
-        .file-details strong {
-            display: block;
-            font-size: 12px;
-            margin-bottom: 3px;
+        .file-name {
+            font-size: 13px;
+            font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .file-details span {
-            font-size: 10px;
-            color: var(--muted);
+        .file-size {
+            color: #70869b;
+            font-size: 11px;
+            margin-top: 3px;
         }
 
         .remove-file {
-            border: 0;
-            background: transparent;
-            color: #7990a9;
+            border: none;
+            background: rgba(255, 77, 77, 0.10);
+            color: #ff7171;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 15px;
         }
 
         .remove-file:hover {
-            color: var(--red);
+            background: rgba(255, 77, 77, 0.18);
         }
 
-        /* FORM */
+        /* =========================
+           FORM
+        ========================= */
+
         .form-section {
-            margin-top: 22px;
-        }
-
-        .section-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: #bdd1e4;
-            margin-bottom: 13px;
-            display: block;
+            margin-top: 32px;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 19px;
         }
 
-        .field {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
+        .form-group {
+            position: relative;
         }
 
-        .field.full {
+        .form-group.full {
             grid-column: 1 / -1;
         }
 
-        .field label {
-            font-size: 11px;
-            color: #89a3bb;
-            font-weight: 600;
-        }
-
-        .field input,
-        .field select {
-            width: 100%;
-            padding: 12px 13px;
-            border-radius: 9px;
-            border: 1px solid var(--border);
-            background: #091727;
-            color: #eaf3fb;
-            outline: none;
-            font-size: 12px;
-            transition: 0.2s ease;
-        }
-
-        .field input::placeholder {
-            color: #566d84;
-        }
-
-        .field input:focus,
-        .field select:focus {
-            border-color: rgba(25, 211, 255, 0.5);
-            box-shadow: 0 0 0 3px rgba(25, 211, 255, 0.06);
-        }
-
-        .field select option {
-            background: #0d1c30;
-            color: #fff;
-        }
-
-        /* ACTION */
-        .action-row {
-            margin-top: 22px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .secondary-btn,
-        .screen-btn {
-            border-radius: 10px;
-            padding: 12px 18px;
-            cursor: pointer;
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b7c7d6;
             font-size: 12px;
             font-weight: 700;
-            transition: 0.2s ease;
+            letter-spacing: 0.2px;
         }
 
-        .secondary-btn {
+        label .required {
+            color: #ff6f61;
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 47px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            background: #081726;
+            color: #edf5fb;
+            padding: 0 14px;
+            outline: none;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        input::placeholder {
+            color: #52687c;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #00aefb;
+            box-shadow: 0 0 0 3px rgba(0, 174, 255, 0.09);
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option,
+        select optgroup {
+            background: #0a1a2b;
+            color: #edf5fb;
+        }
+
+        .field-help {
+            color: #637a8e;
+            font-size: 10px;
+            margin-top: 6px;
+        }
+
+        /* =========================
+           TARGET POSITION COMBOBOX
+        ========================= */
+
+        .position-wrapper {
+            position: relative;
+        }
+
+        .position-input-wrap {
+            position: relative;
+        }
+
+        .position-input {
+            padding-right: 72px;
+        }
+
+        .position-actions {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .position-action {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 7px;
             background: transparent;
-            border: 1px solid var(--border);
-            color: #90a9bf;
+            color: #71879a;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .secondary-btn:hover {
-            border-color: rgba(255,255,255,0.25);
-            color: #fff;
+        .position-action:hover {
+            background: rgba(255,255,255,0.06);
+            color: #00c8ff;
         }
 
-        .screen-btn {
-            border: 0;
-            background: linear-gradient(135deg, var(--cyan), #4b76ff);
-            color: #04111c;
-            min-width: 190px;
-            box-shadow: 0 10px 25px rgba(25, 211, 255, 0.15);
+        .position-dropdown {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 7px);
+            background: #0b1b2d;
+            border: 1px solid rgba(0, 200, 255, 0.18);
+            border-radius: 12px;
+            padding: 7px;
+            max-height: 290px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.45);
         }
 
-        .screen-btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 14px 28px rgba(25, 211, 255, 0.22);
+        .position-dropdown.open {
+            display: block;
         }
 
-        .screen-btn:disabled {
-            opacity: 0.42;
-            cursor: not-allowed;
-            box-shadow: none;
+        .position-category {
+            color: #00c8ff;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 9px 10px 5px;
         }
 
-        /* RIGHT SIDE */
-        .pipeline {
-            padding: 22px;
+        .position-option {
+            padding: 10px;
+            border-radius: 8px;
+            color: #c8d6e2;
+            font-size: 12px;
+            cursor: pointer;
         }
 
-        .pipeline-title {
-            font-size: 15px;
-            margin-bottom: 5px;
+        .position-option:hover,
+        .position-option.active {
+            background: rgba(0, 174, 255, 0.10);
+            color: #ffffff;
         }
 
-        .pipeline-subtitle {
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.5;
+        .no-position {
+            padding: 14px 10px;
+            color: #71869b;
+            font-size: 12px;
+        }
+
+        /* =========================
+           SIDE PANEL
+        ========================= */
+
+        .side-title {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .side-description {
+            color: #75899c;
+            font-size: 12px;
+            line-height: 1.7;
             margin-bottom: 20px;
         }
 
-        .step {
-            position: relative;
+        .ai-flow {
             display: flex;
-            align-items: flex-start;
-            gap: 13px;
-            padding: 0 0 20px;
+            flex-direction: column;
+            gap: 11px;
         }
 
-        .step:not(:last-child)::after {
-            content: "";
-            position: absolute;
-            left: 15px;
-            top: 32px;
-            width: 1px;
-            height: calc(100% - 14px);
-            background: rgba(130, 160, 190, 0.16);
-        }
-
-        .step-icon {
-            width: 31px;
-            height: 31px;
-            border-radius: 50%;
-            border: 1px solid rgba(120, 160, 200, 0.15);
-            background: #0b1829;
+        .flow-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #7f96ad;
-            position: relative;
-            z-index: 2;
-            flex-shrink: 0;
-        }
-
-        .step.active .step-icon {
-            background: rgba(25, 211, 255, 0.12);
-            border-color: rgba(25, 211, 255, 0.35);
-            color: var(--cyan);
-        }
-
-        .step.complete .step-icon {
-            background: rgba(40, 209, 124, 0.12);
-            border-color: rgba(40, 209, 124, 0.35);
-            color: var(--green);
-        }
-
-        .step h4 {
-            font-size: 12px;
-            margin: 1px 0 4px;
-        }
-
-        .step p {
-            color: var(--muted);
-            font-size: 10px;
-            line-height: 1.5;
-        }
-
-        /* PROGRESS */
-        .processing-card {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .processing-card.show {
-            display: block;
-        }
-
-        .processing-head {
-            display: flex;
-            justify-content: space-between;
             gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .processing-head strong {
-            font-size: 12px;
-        }
-
-        .processing-percent {
-            color: var(--cyan);
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 7px;
-            border-radius: 20px;
-            background: #07121f;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--cyan), #5d78ff);
-            transition: width 0.15s ease;
-        }
-
-        .processing-message {
-            font-size: 10px;
-            color: var(--muted);
-            margin-top: 9px;
-        }
-
-        /* INFO CARDS */
-        .info-stack {
-            display: grid;
-            gap: 13px;
-            margin-top: 21px;
-        }
-
-        .info-card {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            padding: 15px;
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,0.015);
-            border-radius: 12px;
-        }
-
-        .info-icon {
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.055);
             border-radius: 10px;
-            background: rgba(25, 211, 255, 0.08);
-            color: var(--cyan);
-            flex-shrink: 0;
         }
 
-        .info-card h4 {
-            font-size: 11px;
-            margin-bottom: 5px;
-        }
-
-        .info-card p {
-            font-size: 10px;
-            color: var(--muted);
-            line-height: 1.5;
-        }
-
-        /* RESULT */
-        .result-box {
-            display: none;
-            margin-top: 20px;
-            padding: 17px;
-            border-radius: 12px;
-            border: 1px solid rgba(40, 209, 124, 0.22);
-            background: rgba(40, 209, 124, 0.06);
-        }
-
-        .result-box.show {
-            display: block;
-        }
-
-        .result-box.error {
-            border-color: rgba(255, 93, 108, 0.25);
-            background: rgba(255, 93, 108, 0.06);
-        }
-
-        .result-title {
+        .flow-icon {
+            width: 32px;
+            height: 32px;
+            flex: 0 0 32px;
+            border-radius: 8px;
+            background: rgba(0, 174, 255, 0.10);
+            color: #00c8ff;
             display: flex;
             align-items: center;
-            gap: 9px;
-            font-size: 13px;
-            font-weight: 700;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .flow-item strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .flow-item span {
+            color: #667d91;
+            font-size: 10px;
+        }
+
+        .info-box {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 11px;
+            background: rgba(0, 200, 255, 0.045);
+            border: 1px solid rgba(0, 200, 255, 0.10);
+        }
+
+        .info-box strong {
+            display: block;
+            font-size: 11px;
+            color: #00c8ff;
             margin-bottom: 6px;
         }
 
-        .result-box.success .result-title {
-            color: var(--green);
+        .info-box p {
+            color: #7890a4;
+            font-size: 10px;
+            line-height: 1.7;
         }
 
-        .result-box.error .result-title {
-            color: var(--red);
+        /* =========================
+           ACTIONS
+        ========================= */
+
+        .form-actions {
+            margin-top: 28px;
+            padding-top: 23px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            display: flex;
+            justify-content: flex-end;
+            gap: 11px;
         }
 
-        .result-text {
-            color: var(--muted);
-            font-size: 11px;
+        .btn {
+            min-height: 44px;
+            padding: 0 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            color: #a5b7c8;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.10);
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #087cff, #00b9e8);
+            color: white;
+            box-shadow: 0 10px 25px rgba(0, 153, 255, 0.20);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 13px 30px rgba(0, 153, 255, 0.30);
+        }
+
+        .btn-primary:disabled {
+            cursor: not-allowed;
+            opacity: 0.42;
+            box-shadow: none;
+        }
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 8, 15, 0.82);
+            backdrop-filter: blur(7px);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-box {
+            width: min(410px, calc(100% - 40px));
+            background: #0b1b2c;
+            border: 1px solid rgba(0,200,255,0.15);
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 46px;
+            height: 46px;
+            border: 3px solid rgba(0,200,255,0.14);
+            border-top-color: #00c8ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 18px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-box h3 {
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+        .loading-box p {
+            color: #74899d;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           ALERT
+        ========================= */
+
+        .alert {
+            display: none;
+            margin-bottom: 20px;
+            padding: 13px 15px;
+            border-radius: 10px;
+            font-size: 12px;
             line-height: 1.5;
         }
 
-        .result-actions {
-            display: none;
-            margin-top: 14px;
-            gap: 9px;
-        }
-
-        .result-actions.show {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .result-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 9px 13px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 700;
-            border: 1px solid var(--border);
-        }
-
-        .result-link.primary {
-            background: rgba(25, 211, 255, 0.11);
-            border-color: rgba(25, 211, 255, 0.26);
-            color: var(--cyan);
-        }
-
-        .result-link.secondary {
-            color: #a4b8cc;
-        }
-
-        /* TOAST */
-        .toast {
-            position: fixed;
-            right: 22px;
-            bottom: 22px;
-            min-width: 270px;
-            max-width: 390px;
-            background: #102238;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            color: white;
-            border-radius: 11px;
-            padding: 14px 16px;
-            transform: translateY(130px);
-            opacity: 0;
-            pointer-events: none;
-            transition: 0.3s ease;
-            z-index: 300;
-        }
-
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .toast.success {
-            border-color: rgba(40, 209, 124, 0.25);
-        }
-
-        .toast.error {
-            border-color: rgba(255, 93, 108, 0.25);
-        }
-
-        .toast strong {
+        .alert.error {
             display: block;
-            font-size: 12px;
-            margin-bottom: 4px;
+            color: #ff9a9a;
+            background: rgba(255, 70, 70, 0.08);
+            border: 1px solid rgba(255, 70, 70, 0.15);
         }
 
-        .toast span {
-            font-size: 10px;
-            color: var(--muted);
-            line-height: 1.4;
+        .alert.success {
+            display: block;
+            color: #79e4a6;
+            background: rgba(35, 205, 110, 0.08);
+            border: 1px solid rgba(35, 205, 110, 0.15);
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 1100px) {
-            .upload-grid {
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 950px) {
+            .screen-layout {
                 grid-template-columns: 1fr;
             }
+
+            .side-card {
+                order: 2;
+            }
         }
 
-        @media (max-width: 800px) {
-            .sidebar {
-                width: 76px;
-                padding: 15px 9px;
+        @media (max-width: 700px) {
+            .topbar {
+                padding: 0 17px;
             }
 
-            .brand-text,
-            .menu-title,
-            .nav-item span,
-            .system-status span {
+            .top-link {
                 display: none;
             }
 
-            .brand {
-                justify-content: center;
-                padding-left: 0;
-                padding-right: 0;
+            .page {
+                width: min(100% - 24px, 1180px);
+                padding-top: 25px;
             }
 
-            .nav-item {
-                justify-content: center;
-                padding: 12px 8px;
-            }
-
-            .nav-item.active {
-                padding-left: 8px;
-                border-left: 0;
-                border-radius: 10px;
-            }
-
-            .sidebar-bottom {
-                left: 9px;
-                right: 9px;
-            }
-
-            .system-status {
-                justify-content: center;
-                padding: 12px 5px;
-            }
-
-            .main {
-                margin-left: 76px;
-            }
-
-            .content {
+            .main-card,
+            .side-card {
                 padding: 20px;
             }
 
-            .topbar {
-                padding: 0 20px;
-            }
-        }
-
-        @media (max-width: 620px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
 
-            .field.full {
+            .form-group.full {
                 grid-column: auto;
             }
 
-            .action-row {
-                flex-direction: column;
+            .page-header h2 {
+                font-size: 24px;
             }
 
-            .screen-btn,
-            .secondary-btn {
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .btn {
                 width: 100%;
-            }
-
-            .page-heading h1 {
-                font-size: 18px;
-            }
-
-            .version {
-                display: none;
             }
         }
     </style>
@@ -880,1468 +765,2150 @@
 
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+<!-- =========================
+     TOP BAR
+========================= -->
 
-        <div class="brand">
-            <div class="brand-icon">AI</div>
+<header class="topbar">
 
-            <div class="brand-text">
-                <h2>CV SCREEN</h2>
-                <span>Recruitment Intelligence</span>
-            </div>
+    <a href="{{ url_for('dashboard') }}" class="brand">
+
+        <div class="brand-icon">
+            AI
         </div>
 
-        <div class="menu-title">Main Menu</div>
-
-        <a class="nav-item" href="{{ url_for('dashboard') }}">
-            <div class="nav-icon">▦</div>
-            <span>Dashboard</span>
-        </a>
-
-        <a class="nav-item" href="{{ url_for('candidates') }}">
-            <div class="nav-icon">◉</div>
-            <span>Candidates</span>
-        </a>
-
-        <a class="nav-item" href="{{ url_for('jobs') }}">
-            <div class="nav-icon">▤</div>
-            <span>Job Profiles</span>
-        </a>
-
-        <a class="nav-item active" href="{{ url_for('upload_cv') }}">
-            <div class="nav-icon">↑</div>
-            <span>Upload CV</span>
-        </a>
-
-        <a class="nav-item" href="{{ url_for('screening') }}">
-            <div class="nav-icon">✦</div>
-            <span>AI Screening</span>
-        </a>
-
-        <a class="nav-item" href="{{ url_for('reports') }}">
-            <div class="nav-icon">▥</div>
-            <span>Reports</span>
-        </a>
-
-        <a class="nav-item" href="{{ url_for('settings') }}">
-            <div class="nav-icon">⚙</div>
-            <span>Settings</span>
-        </a>
-
-        <div class="sidebar-bottom">
-            <div class="system-status">
-                <div class="status-dot"></div>
-                <span>System Online</span>
-            </div>
+        <div class="brand-text">
+            <h1>AI CV SCREEN</h1>
+            <span>INTELLIGENT RECRUITMENT</span>
         </div>
 
-    </aside>
+    </a>
 
+    <div class="top-actions">
 
-    <!-- MAIN -->
-    <main class="main">
+        <a href="{{ url_for('dashboard') }}" class="top-link">
+            Dashboard
+        </a>
 
-        <!-- TOP BAR -->
-        <header class="topbar">
+        <a href="{{ url_for('candidates') }}" class="top-link">
+            Candidates
+        </a>
 
-            <div class="page-heading">
-                <h1>Upload Candidate CV</h1>
-                <p>Register a candidate and prepare their CV for intelligent screening.</p>
-            </div>
+        <div class="user-badge">
+            AI
+        </div>
 
-            <div class="topbar-right">
-                <div class="version">
-                    AI ENGINE v1.0
-                </div>
+    </div>
 
-                <div class="profile">
-                    AI
-                </div>
-            </div>
+</header>
 
-        </header>
 
+<!-- =========================
+     MAIN PAGE
+========================= -->
 
-        <!-- CONTENT -->
-        <section class="content">
+<main class="page">
 
-            <div class="upload-grid">
+    <div class="page-header">
 
-                <!-- LEFT -->
-                <div>
+        <div class="breadcrumb">
+            Dashboard / <span>Upload CV</span>
+        </div>
 
-                    <div class="card">
+        <h2>Upload Candidate CV</h2>
 
-                        <div class="card-header">
-                            <h2>Candidate CV</h2>
-                            <p>
-                                Upload the candidate's Curriculum Vitae in PDF or DOCX format.
-                                The system will register the candidate before AI analysis begins.
-                            </p>
-                        </div>
-
-                        <div class="card-body">
-
-                            <!-- DROP ZONE -->
-                            <div class="drop-zone" id="dropZone">
-
-                                <div class="upload-content">
-
-                                    <div class="upload-icon">
-                                        ↑
-                                    </div>
-
-                                    <h3>Drop CV here or browse</h3>
-
-                                    <p>
-                                        Supported formats: PDF and DOCX<br>
-                                        Maximum file size: 10 MB
-                                    </p>
-
-                                    <div class="browse-btn">
-                                        Browse CV
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <input
-                                type="file"
-                                id="cvFile"
-                                class="file-input"
-                                accept=".pdf,.docx"
-                            >
-
-                            <!-- FILE PREVIEW -->
-                            <div class="file-preview" id="filePreview">
-
-                                <div class="file-info">
-
-                                    <div class="file-icon">
-                                        CV
-                                    </div>
-
-                                    <div class="file-details">
-                                        <strong id="fileName">
-                                            No file selected
-                                        </strong>
-
-                                        <span id="fileSize">
-                                            --
-                                        </span>
-                                    </div>
-
-                                </div>
-
-                                <button
-                                    type="button"
-                                    class="remove-file"
-                                    id="removeFile"
-                                    title="Remove file"
-                                >
-                                    ×
-                                </button>
-
-                            </div>
-
-
-                            <!-- CANDIDATE DETAILS -->
-                            <div class="form-section">
-
-                                <span class="section-label">
-                                    Candidate Information
-                                </span>
-
-                                <div class="form-grid">
-
-                                    <div class="field">
-
-                                        <label for="candidateName">
-                                            FULL NAME *
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            id="candidateName"
-                                            placeholder="e.g. Beffin Akinyi"
-                                            autocomplete="name"
-                                        >
-
-                                    </div>
-
-
-                                    <div class="field">
-
-                                        <label for="candidateEmail">
-                                            EMAIL ADDRESS
-                                        </label>
-
-                                        <input
-                                            type="email"
-                                            id="candidateEmail"
-                                            placeholder="candidate@example.com"
-                                            autocomplete="email"
-                                        >
-
-                                    </div>
-
-
-                                    <div class="field">
-
-                                        <label for="position">
-                                            TARGET POSITION *
-                                        </label>
-
-                                        <select id="position">
-
-                                            <option value="">
-                                                Select target position
-                                            </option>
-
-                                            <option value="Software Developer">
-                                                Software Developer
-                                            </option>
-
-                                            <option value="Network Administrator">
-                                                Network Administrator
-                                            </option>
-
-                                            <option value="Cybersecurity Analyst">
-                                                Cybersecurity Analyst
-                                            </option>
-
-                                            <option value="IT Support Specialist">
-                                                IT Support Specialist
-                                            </option>
-
-                                            <option value="Data Analyst">
-                                                Data Analyst
-                                            </option>
-
-                                            <option value="Systems Administrator">
-                                                Systems Administrator
-                                            </option>
-
-                                        </select>
-
-                                    </div>
-
-
-                                    <div class="field">
-
-                                        <label for="jobProfile">
-                                            JOB PROFILE
-                                        </label>
-
-                                        <select id="jobProfile">
-
-                                            <option value="">
-                                                Select job profile
-                                            </option>
-
-                                            <option value="Junior Software Developer">
-                                                Junior Software Developer
-                                            </option>
-
-                                            <option value="Network Administrator">
-                                                Network Administrator
-                                            </option>
-
-                                            <option value="Cybersecurity Analyst">
-                                                Cybersecurity Analyst
-                                            </option>
-
-                                            <option value="IT Support Specialist">
-                                                IT Support Specialist
-                                            </option>
-
-                                            <option value="Data Analyst">
-                                                Data Analyst
-                                            </option>
-
-                                        </select>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- PROCESSING -->
-                            <div class="processing-card card" id="processingCard">
-
-                                <div class="card-body">
-
-                                    <div class="processing-head">
-
-                                        <strong id="processingTitle">
-                                            Uploading candidate CV...
-                                        </strong>
-
-                                        <span class="processing-percent" id="progressPercent">
-                                            0%
-                                        </span>
-
-                                    </div>
-
-                                    <div class="progress-track">
-
-                                        <div
-                                            class="progress-bar"
-                                            id="progressBar"
-                                        ></div>
-
-                                    </div>
-
-                                    <div
-                                        class="processing-message"
-                                        id="processingMessage"
-                                    >
-                                        Preparing secure upload...
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- RESULT -->
-                            <div
-                                class="result-box"
-                                id="resultBox"
-                            >
-
-                                <div class="result-title" id="resultTitle">
-                                    ✓ Candidate Registered
-                                </div>
-
-                                <div
-                                    class="result-text"
-                                    id="resultText"
-                                ></div>
-
-                                <div
-                                    class="result-actions"
-                                    id="resultActions"
-                                >
-
-                                    <a
-                                        href="{{ url_for('candidates') }}"
-                                        class="result-link primary"
-                                    >
-                                        View Candidates
-                                    </a>
-
-                                    <a
-                                        href="{{ url_for('screening') }}"
-                                        class="result-link secondary"
-                                    >
-                                        Continue to AI Screening
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- ACTIONS -->
-                            <div class="action-row">
-
-                                <button
-                                    type="button"
-                                    class="secondary-btn"
-                                    id="clearBtn"
-                                >
-                                    Clear Form
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="screen-btn"
-                                    id="screenBtn"
-                                    disabled
-                                >
-                                    ✦ Register & Prepare CV
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- RIGHT -->
-                <div>
-
-                    <div class="card">
-
-                        <div class="card-header">
-                            <h2>AI Screening Pipeline</h2>
-
-                            <p>
-                                Candidate processing stages used by the recruitment intelligence platform.
-                            </p>
-                        </div>
-
-                        <div class="pipeline">
-
-                            <div class="step active" id="step1">
-
-                                <div class="step-icon">
-                                    1
-                                </div>
-
-                                <div>
-                                    <h4>CV Registration</h4>
-
-                                    <p>
-                                        Candidate details and CV are securely registered in the system.
-                                    </p>
-                                </div>
-
-                            </div>
-
-
-                            <div class="step" id="step2">
-
-                                <div class="step-icon">
-                                    2
-                                </div>
-
-                                <div>
-                                    <h4>Text Extraction</h4>
-
-                                    <p>
-                                        Candidate information will be extracted from the uploaded CV.
-                                    </p>
-                                </div>
-
-                            </div>
-
-
-                            <div class="step" id="step3">
-
-                                <div class="step-icon">
-                                    3
-                                </div>
-
-                                <div>
-                                    <h4>Skill Identification</h4>
-
-                                    <p>
-                                        Relevant technical and professional skills will be identified.
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="step" id="step4">
-
-                                <div class="step-icon">
-                                    4
-                                </div>
-
-                                <div>
-                                    <h4>Requirement Matching</h4>
-
-                                    <p>
-                                        Candidate qualifications will be compared against job requirements.
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="step" id="step5">
-
-                                <div class="step-icon">
-                                    5
-                                </div>
-
-                                <div>
-                                    <h4>Screening Results</h4>
-
-                                    <p>
-                                        Match score and recommendation will be generated after AI analysis.
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- INFORMATION -->
-                    <div class="info-stack">
-
-                        <div class="info-card">
-
-                            <div class="info-icon">
-                                PDF
-                            </div>
-
-                            <div>
-                                <h4>Supported CV Formats</h4>
-
-                                <p>
-                                    Upload standard PDF or DOCX Curriculum Vitae files.
-                                </p>
-                            </div>
-
-                        </div>
-
-
-                        <div class="info-card">
-
-                            <div class="info-icon">
-                                AI
-                            </div>
-
-                            <div>
-                                <h4>Intelligent Analysis</h4>
-
-                                <p>
-                                    The system is designed to extract skills, qualifications,
-                                    experience and other recruitment information.
-                                </p>
-                            </div>
-
-                        </div>
-
-
-                        <div class="info-card">
-
-                            <div class="info-icon">
-                                DB
-                            </div>
-
-                            <div>
-                                <h4>Database Registration</h4>
-
-                                <p>
-                                    Successful uploads are recorded in the recruitment database
-                                    before further AI processing.
-                                </p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- TOAST -->
-    <div class="toast" id="toast">
-
-        <strong id="toastTitle">
-            Notification
-        </strong>
-
-        <span id="toastMessage">
-            --
-        </span>
+        <p>
+            Upload a candidate CV and provide the target role.
+            After saving, you will be taken to the AI Screening page
+            to run the actual analysis.
+        </p>
 
     </div>
 
 
-    <script>
-        /* =========================================================
-           ELEMENTS
-        ========================================================= */
+    <!-- ALERT -->
 
-        const dropZone = document.getElementById("dropZone");
-        const cvFile = document.getElementById("cvFile");
-
-        const filePreview = document.getElementById("filePreview");
-        const fileName = document.getElementById("fileName");
-        const fileSize = document.getElementById("fileSize");
-        const removeFile = document.getElementById("removeFile");
-
-        const candidateName = document.getElementById("candidateName");
-        const candidateEmail = document.getElementById("candidateEmail");
-        const position = document.getElementById("position");
-        const jobProfile = document.getElementById("jobProfile");
-
-        const screenBtn = document.getElementById("screenBtn");
-        const clearBtn = document.getElementById("clearBtn");
-
-        const processingCard = document.getElementById("processingCard");
-        const progressBar = document.getElementById("progressBar");
-        const progressPercent = document.getElementById("progressPercent");
-        const processingTitle = document.getElementById("processingTitle");
-        const processingMessage = document.getElementById("processingMessage");
-
-        const resultBox = document.getElementById("resultBox");
-        const resultTitle = document.getElementById("resultTitle");
-        const resultText = document.getElementById("resultText");
-        const resultActions = document.getElementById("resultActions");
-
-        const toast = document.getElementById("toast");
-        const toastTitle = document.getElementById("toastTitle");
-        const toastMessage = document.getElementById("toastMessage");
+    <div id="alertBox" class="alert"></div>
 
 
-        /* =========================================================
-           STATE
-        ========================================================= */
+    <div class="screen-layout">
 
-        let selectedFile = null;
-        let currentXhr = null;
+        <!-- =========================
+             MAIN CARD
+        ========================= -->
+
+        <section class="card main-card">
+
+            <form
+                id="uploadForm"
+                method="POST"
+                action="{{ url_for('upload_cv') }}"
+                enctype="multipart/form-data"
+            >
+
+                <!-- =========================
+                     STEP 1
+                ========================= -->
+
+                <div class="section-title">
+
+                    <div class="section-number">
+                        01
+                    </div>
+
+                    <div>
+                        <h3>Candidate CV</h3>
+                        <p>Upload the applicant's CV document.</p>
+                    </div>
+
+                </div>
 
 
-        /* =========================================================
-           TOAST
-        ========================================================= */
+                <div
+                    class="drop-zone"
+                    id="dropZone"
+                >
 
-        function showToast(title, message, type = "success") {
+                    <div class="upload-icon">
+                        ↑
+                    </div>
 
-            toastTitle.textContent = title;
-            toastMessage.textContent = message;
+                    <h4>
+                        Drag & Drop CV Here
+                    </h4>
 
-            toast.classList.remove("success", "error", "show");
-            toast.classList.add(type);
+                    <p>
+                        or
+                        <span class="browse">
+                            click to browse
+                        </span>
+                    </p>
 
-            requestAnimationFrame(() => {
-                toast.classList.add("show");
-            });
+                    <p style="margin-top:8px;">
+                        Supported formats: PDF, DOCX · Maximum size: 10MB
+                    </p>
 
-            setTimeout(() => {
-                toast.classList.remove("show");
-            }, 4000);
+                    <input
+                        type="file"
+                        id="cvFile"
+                        name="cv_file"
+                        class="file-input"
+                        accept=".pdf,.docx"
+                    >
+
+                </div>
+
+
+                <!-- FILE PREVIEW -->
+
+                <div
+                    class="file-preview"
+                    id="filePreview"
+                >
+
+                    <div class="file-info">
+
+                        <div class="file-icon">
+                            CV
+                        </div>
+
+                        <div class="file-details">
+
+                            <div
+                                class="file-name"
+                                id="fileName"
+                            >
+                                CV file
+                            </div>
+
+                            <div
+                                class="file-size"
+                                id="fileSize"
+                            >
+                                0 KB
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="remove-file"
+                        id="removeFile"
+                        title="Remove file"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <!-- =========================
+                     STEP 2
+                ========================= -->
+
+                <div class="form-section">
+
+                    <div class="section-title">
+
+                        <div class="section-number">
+                            02
+                        </div>
+
+                        <div>
+                            <h3>Candidate Information</h3>
+                            <p>Provide basic applicant details.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <!-- NAME -->
+
+                        <div class="form-group">
+
+                            <label for="candidateName">
+                                Candidate Name
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="candidateName"
+                                name="candidate_name"
+                                placeholder="e.g. Beffin Akinyi"
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="form-group">
+
+                            <label for="candidateEmail">
+                                Email Address
+                            </label>
+
+                            <input
+                                type="email"
+                                id="candidateEmail"
+                                name="email"
+                                placeholder="candidate@example.com"
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <!-- TARGET POSITION -->
+
+                        <div class="form-group">
+
+                            <label for="position">
+                                Target Position
+                                <span class="required">*</span>
+                            </label>
+
+                            <div class="position-wrapper">
+
+                                <div class="position-input-wrap">
+
+                                    <input
+                                        type="text"
+                                        id="position"
+                                        name="position"
+                                        class="position-input"
+                                        placeholder="Select a position or type any job title..."
+                                        autocomplete="off"
+                                        aria-autocomplete="list"
+                                        aria-controls="positionDropdown"
+                                    >
+
+                                    <div class="position-actions">
+
+                                        <button
+                                            type="button"
+                                            class="position-action"
+                                            id="positionClear"
+                                            title="Clear position"
+                                        >
+                                            ×
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="position-action"
+                                            id="positionToggle"
+                                            title="Show positions"
+                                        >
+                                            ▾
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    class="position-dropdown"
+                                    id="positionDropdown"
+                                ></div>
+
+                            </div>
+
+                            <div class="field-help">
+                                You can select a suggested position or type any custom job title.
+                            </div>
+
+                        </div>
+
+
+                        <!-- JOB PROFILE -->
+
+                        <div class="form-group">
+
+                            <label for="jobProfile">
+                                Job Profile
+                            </label>
+
+                            <select
+                                id="jobProfile"
+                                name="job_profile"
+                            >
+
+                                <option value="">
+                                    Select standardized job profile
+                                </option>
+
+
+                                <!-- INFORMATION TECHNOLOGY -->
+
+                                <optgroup label="Information Technology & Digital">
+
+                                    <option value="Software Developer">
+                                        Software Developer
+                                    </option>
+
+                                    <option value="Web Developer">
+                                        Web Developer
+                                    </option>
+
+                                    <option value="Mobile App Developer">
+                                        Mobile App Developer
+                                    </option>
+
+                                    <option value="Systems Analyst">
+                                        Systems Analyst
+                                    </option>
+
+                                    <option value="IT Support Specialist">
+                                        IT Support Specialist
+                                    </option>
+
+                                    <option value="Network Administrator">
+                                        Network Administrator
+                                    </option>
+
+                                    <option value="Network Engineer">
+                                        Network Engineer
+                                    </option>
+
+                                    <option value="Cybersecurity Analyst">
+                                        Cybersecurity Analyst
+                                    </option>
+
+                                    <option value="Database Administrator">
+                                        Database Administrator
+                                    </option>
+
+                                    <option value="Data Analyst">
+                                        Data Analyst
+                                    </option>
+
+                                    <option value="Data Scientist">
+                                        Data Scientist
+                                    </option>
+
+                                    <option value="Cloud Engineer">
+                                        Cloud Engineer
+                                    </option>
+
+                                    <option value="DevOps Engineer">
+                                        DevOps Engineer
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- FINANCE -->
+
+                                <optgroup label="Finance & Accounting">
+
+                                    <option value="Accountant">
+                                        Accountant
+                                    </option>
+
+                                    <option value="Accounts Assistant">
+                                        Accounts Assistant
+                                    </option>
+
+                                    <option value="Finance Officer">
+                                        Finance Officer
+                                    </option>
+
+                                    <option value="Financial Analyst">
+                                        Financial Analyst
+                                    </option>
+
+                                    <option value="Auditor">
+                                        Auditor
+                                    </option>
+
+                                    <option value="Cashier">
+                                        Cashier
+                                    </option>
+
+                                    <option value="Credit Officer">
+                                        Credit Officer
+                                    </option>
+
+                                    <option value="Procurement Officer">
+                                        Procurement Officer
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- HR & ADMIN -->
+
+                                <optgroup label="Human Resources & Administration">
+
+                                    <option value="Human Resource Officer">
+                                        Human Resource Officer
+                                    </option>
+
+                                    <option value="HR Assistant">
+                                        HR Assistant
+                                    </option>
+
+                                    <option value="Administrative Officer">
+                                        Administrative Officer
+                                    </option>
+
+                                    <option value="Office Administrator">
+                                        Office Administrator
+                                    </option>
+
+                                    <option value="Receptionist">
+                                        Receptionist
+                                    </option>
+
+                                    <option value="Personal Assistant">
+                                        Personal Assistant
+                                    </option>
+
+                                    <option value="Office Manager">
+                                        Office Manager
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- SALES & BUSINESS -->
+
+                                <optgroup label="Sales, Marketing & Business">
+
+                                    <option value="Sales Representative">
+                                        Sales Representative
+                                    </option>
+
+                                    <option value="Sales Manager">
+                                        Sales Manager
+                                    </option>
+
+                                    <option value="Marketing Officer">
+                                        Marketing Officer
+                                    </option>
+
+                                    <option value="Digital Marketing Specialist">
+                                        Digital Marketing Specialist
+                                    </option>
+
+                                    <option value="Business Development Officer">
+                                        Business Development Officer
+                                    </option>
+
+                                    <option value="Business Analyst">
+                                        Business Analyst
+                                    </option>
+
+                                    <option value="Customer Service Officer">
+                                        Customer Service Officer
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- HEALTHCARE -->
+
+                                <optgroup label="Healthcare & Medical">
+
+                                    <option value="Clinical Officer">
+                                        Clinical Officer
+                                    </option>
+
+                                    <option value="Nurse">
+                                        Nurse
+                                    </option>
+
+                                    <option value="Registered Nurse">
+                                        Registered Nurse
+                                    </option>
+
+                                    <option value="Medical Officer">
+                                        Medical Officer
+                                    </option>
+
+                                    <option value="Medical Laboratory Technologist">
+                                        Medical Laboratory Technologist
+                                    </option>
+
+                                    <option value="Pharmacist">
+                                        Pharmacist
+                                    </option>
+
+                                    <option value="Pharmaceutical Technologist">
+                                        Pharmaceutical Technologist
+                                    </option>
+
+                                    <option value="Nutritionist">
+                                        Nutritionist
+                                    </option>
+
+                                    <option value="Health Records Officer">
+                                        Health Records Officer
+                                    </option>
+
+                                    <option value="Community Health Worker">
+                                        Community Health Worker
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- EDUCATION -->
+
+                                <optgroup label="Education & Training">
+
+                                    <option value="Teacher">
+                                        Teacher
+                                    </option>
+
+                                    <option value="Lecturer">
+                                        Lecturer
+                                    </option>
+
+                                    <option value="Trainer">
+                                        Trainer
+                                    </option>
+
+                                    <option value="Tutor">
+                                        Tutor
+                                    </option>
+
+                                    <option value="Education Officer">
+                                        Education Officer
+                                    </option>
+
+                                    <option value="Teaching Assistant">
+                                        Teaching Assistant
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- ENGINEERING -->
+
+                                <optgroup label="Engineering & Construction">
+
+                                    <option value="Civil Engineer">
+                                        Civil Engineer
+                                    </option>
+
+                                    <option value="Electrical Engineer">
+                                        Electrical Engineer
+                                    </option>
+
+                                    <option value="Mechanical Engineer">
+                                        Mechanical Engineer
+                                    </option>
+
+                                    <option value="Electronic Engineer">
+                                        Electronic Engineer
+                                    </option>
+
+                                    <option value="Structural Engineer">
+                                        Structural Engineer
+                                    </option>
+
+                                    <option value="Quantity Surveyor">
+                                        Quantity Surveyor
+                                    </option>
+
+                                    <option value="Architect">
+                                        Architect
+                                    </option>
+
+                                    <option value="Construction Manager">
+                                        Construction Manager
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- LOGISTICS -->
+
+                                <optgroup label="Procurement, Logistics & Transport">
+
+                                    <option value="Procurement Officer">
+                                        Procurement Officer
+                                    </option>
+
+                                    <option value="Procurement Manager">
+                                        Procurement Manager
+                                    </option>
+
+                                    <option value="Supply Chain Officer">
+                                        Supply Chain Officer
+                                    </option>
+
+                                    <option value="Logistics Officer">
+                                        Logistics Officer
+                                    </option>
+
+                                    <option value="Warehouse Officer">
+                                        Warehouse Officer
+                                    </option>
+
+                                    <option value="Transport Manager">
+                                        Transport Manager
+                                    </option>
+
+                                    <option value="Fleet Manager">
+                                        Fleet Manager
+                                    </option>
+
+                                    <option value="Driver">
+                                        Driver
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- HOSPITALITY -->
+
+                                <optgroup label="Hospitality & Tourism">
+
+                                    <option value="Hotel Manager">
+                                        Hotel Manager
+                                    </option>
+
+                                    <option value="Chef">
+                                        Chef
+                                    </option>
+
+                                    <option value="Waiter">
+                                        Waiter
+                                    </option>
+
+                                    <option value="Front Office Officer">
+                                        Front Office Officer
+                                    </option>
+
+                                    <option value="Tour Guide">
+                                        Tour Guide
+                                    </option>
+
+                                    <option value="Travel Consultant">
+                                        Travel Consultant
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- LEGAL -->
+
+                                <optgroup label="Legal & Compliance">
+
+                                    <option value="Lawyer">
+                                        Lawyer
+                                    </option>
+
+                                    <option value="Legal Officer">
+                                        Legal Officer
+                                    </option>
+
+                                    <option value="Legal Assistant">
+                                        Legal Assistant
+                                    </option>
+
+                                    <option value="Compliance Officer">
+                                        Compliance Officer
+                                    </option>
+
+                                    <option value="Risk Officer">
+                                        Risk Officer
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- MEDIA -->
+
+                                <optgroup label="Media, Creative & Communications">
+
+                                    <option value="Journalist">
+                                        Journalist
+                                    </option>
+
+                                    <option value="Communications Officer">
+                                        Communications Officer
+                                    </option>
+
+                                    <option value="Public Relations Officer">
+                                        Public Relations Officer
+                                    </option>
+
+                                    <option value="Content Writer">
+                                        Content Writer
+                                    </option>
+
+                                    <option value="Graphic Designer">
+                                        Graphic Designer
+                                    </option>
+
+                                    <option value="Video Editor">
+                                        Video Editor
+                                    </option>
+
+                                    <option value="Photographer">
+                                        Photographer
+                                    </option>
+
+                                    <option value="Social Media Manager">
+                                        Social Media Manager
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- AGRICULTURE -->
+
+                                <optgroup label="Agriculture & Environment">
+
+                                    <option value="Agricultural Officer">
+                                        Agricultural Officer
+                                    </option>
+
+                                    <option value="Agronomist">
+                                        Agronomist
+                                    </option>
+
+                                    <option value="Farm Manager">
+                                        Farm Manager
+                                    </option>
+
+                                    <option value="Veterinary Officer">
+                                        Veterinary Officer
+                                    </option>
+
+                                    <option value="Environmental Officer">
+                                        Environmental Officer
+                                    </option>
+
+                                    <option value="Environmental Scientist">
+                                        Environmental Scientist
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- SECURITY -->
+
+                                <optgroup label="Security & Public Safety">
+
+                                    <option value="Security Officer">
+                                        Security Officer
+                                    </option>
+
+                                    <option value="Security Guard">
+                                        Security Guard
+                                    </option>
+
+                                    <option value="Security Manager">
+                                        Security Manager
+                                    </option>
+
+                                    <option value="Police Officer">
+                                        Police Officer
+                                    </option>
+
+                                    <option value="Fire Safety Officer">
+                                        Fire Safety Officer
+                                    </option>
+
+                                    <option value="Health and Safety Officer">
+                                        Health and Safety Officer
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- RESEARCH & SOCIAL SERVICES -->
+
+                                <optgroup label="Research, Science & Social Services">
+
+                                    <option value="Research Assistant">
+                                        Research Assistant
+                                    </option>
+
+                                    <option value="Research Officer">
+                                        Research Officer
+                                    </option>
+
+                                    <option value="Laboratory Technician">
+                                        Laboratory Technician
+                                    </option>
+
+                                    <option value="Social Worker">
+                                        Social Worker
+                                    </option>
+
+                                    <option value="Community Development Officer">
+                                        Community Development Officer
+                                    </option>
+
+                                    <option value="Project Officer">
+                                        Project Officer
+                                    </option>
+
+                                    <option value="Project Manager">
+                                        Project Manager
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- REAL ESTATE -->
+
+                                <optgroup label="Real Estate & Property">
+
+                                    <option value="Real Estate Agent">
+                                        Real Estate Agent
+                                    </option>
+
+                                    <option value="Property Manager">
+                                        Property Manager
+                                    </option>
+
+                                    <option value="Estate Officer">
+                                        Estate Officer
+                                    </option>
+
+                                    <option value="Property Valuer">
+                                        Property Valuer
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- MANUFACTURING -->
+
+                                <optgroup label="Manufacturing & Production">
+
+                                    <option value="Production Officer">
+                                        Production Officer
+                                    </option>
+
+                                    <option value="Production Manager">
+                                        Production Manager
+                                    </option>
+
+                                    <option value="Quality Assurance Officer">
+                                        Quality Assurance Officer
+                                    </option>
+
+                                    <option value="Quality Control Officer">
+                                        Quality Control Officer
+                                    </option>
+
+                                    <option value="Machine Operator">
+                                        Machine Operator
+                                    </option>
+
+                                    <option value="Maintenance Technician">
+                                        Maintenance Technician
+                                    </option>
+
+                                </optgroup>
+
+
+                                <!-- GENERAL -->
+
+                                <optgroup label="General & Other Roles">
+
+                                    <option value="Project Coordinator">
+                                        Project Coordinator
+                                    </option>
+
+                                    <option value="Operations Officer">
+                                        Operations Officer
+                                    </option>
+
+                                    <option value="Operations Manager">
+                                        Operations Manager
+                                    </option>
+
+                                    <option value="Business Manager">
+                                        Business Manager
+                                    </option>
+
+                                    <option value="Consultant">
+                                        Consultant
+                                    </option>
+
+                                    <option value="Field Officer">
+                                        Field Officer
+                                    </option>
+
+                                    <option value="Intern">
+                                        Intern
+                                    </option>
+
+                                    <option value="Other">
+                                        Other
+                                    </option>
+
+                                </optgroup>
+
+                            </select>
+
+                            <div class="field-help">
+                                Standardized profile used by the AI matching engine.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     ACTIONS
+                ========================= -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="clearBtn"
+                    >
+                        Clear Form
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="screenBtn"
+                        disabled
+                    >
+                        Upload & Continue to Screening →
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================
+             SIDE CARD
+        ========================= -->
+
+        <aside class="card side-card">
+
+            <h3 class="side-title">
+                Next Step: AI Screening
+            </h3>
+
+            <p class="side-description">
+                After you upload the CV, you will be taken to the
+                AI Screening page where you can start the actual analysis.
+            </p>
+
+
+            <div class="ai-flow">
+
+                <div class="flow-item">
+
+                    <div class="flow-icon">
+                        01
+                    </div>
+
+                    <div>
+                        <strong>Upload CV</strong>
+                        <span>
+                            Save candidate + document
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-icon">
+                        02
+                    </div>
+
+                    <div>
+                        <strong>AI Screening Page</strong>
+                        <span>
+                            Review candidate & job profile
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-icon">
+                        03
+                    </div>
+
+                    <div>
+                        <strong>Start AI Screening</strong>
+                        <span>
+                            Run the matching engine
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="flow-item">
+
+                    <div class="flow-icon">
+                        04
+                    </div>
+
+                    <div>
+                        <strong>Results</strong>
+                        <span>
+                            View scores & recommendation
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <strong>
+                    AI MATCHING CRITERIA
+                </strong>
+
+                <p>
+                    Skills 40% · Experience 25% · Education 15%
+                    · Job Relevance 20%
+                </p>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</main>
+
+
+<!-- =========================
+     LOADING OVERLAY
+========================= -->
+
+<div
+    class="loading-overlay"
+    id="loadingOverlay"
+>
+
+    <div class="loading-box">
+
+        <div class="spinner"></div>
+
+        <h3>
+            Uploading CV...
+        </h3>
+
+        <p>
+            Saving candidate information and document.
+            You will be redirected to the AI Screening page.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ==========================================
+       ELEMENTS
+    ========================================== */
+
+    const uploadForm = document.getElementById("uploadForm");
+
+    const dropZone = document.getElementById("dropZone");
+
+    const cvFile = document.getElementById("cvFile");
+
+    const filePreview = document.getElementById("filePreview");
+
+    const fileName = document.getElementById("fileName");
+
+    const fileSize = document.getElementById("fileSize");
+
+    const removeFile = document.getElementById("removeFile");
+
+    const candidateName = document.getElementById("candidateName");
+
+    const candidateEmail = document.getElementById("candidateEmail");
+
+    const position = document.getElementById("position");
+
+    const jobProfile = document.getElementById("jobProfile");
+
+    const screenBtn = document.getElementById("screenBtn");
+
+    const clearBtn = document.getElementById("clearBtn");
+
+    const alertBox = document.getElementById("alertBox");
+
+    const loadingOverlay = document.getElementById("loadingOverlay");
+
+    const positionDropdown = document.getElementById("positionDropdown");
+
+    const positionClear = document.getElementById("positionClear");
+
+    const positionToggle = document.getElementById("positionToggle");
+
+
+    let selectedFile = null;
+
+    let activePositionIndex = -1;
+
+
+    /* ==========================================
+       POSITION DATA
+    ========================================== */
+
+    const targetPositionCategories = [
+
+        {
+            category: "Information Technology",
+            positions: [
+                "Software Developer",
+                "Web Developer",
+                "Mobile App Developer",
+                "IT Support Specialist",
+                "Systems Administrator",
+                "Network Administrator",
+                "Network Engineer",
+                "Cybersecurity Analyst",
+                "Database Administrator",
+                "Data Analyst",
+                "Data Scientist",
+                "Systems Analyst",
+                "Cloud Engineer",
+                "DevOps Engineer"
+            ]
+        },
+
+        {
+            category: "Finance & Accounting",
+            positions: [
+                "Accountant",
+                "Accounts Assistant",
+                "Finance Officer",
+                "Financial Analyst",
+                "Auditor",
+                "Cashier",
+                "Credit Officer",
+                "Treasury Officer"
+            ]
+        },
+
+        {
+            category: "Human Resources & Administration",
+            positions: [
+                "Human Resource Officer",
+                "HR Assistant",
+                "Administrative Officer",
+                "Office Administrator",
+                "Receptionist",
+                "Personal Assistant",
+                "Office Manager"
+            ]
+        },
+
+        {
+            category: "Sales & Marketing",
+            positions: [
+                "Sales Representative",
+                "Sales Manager",
+                "Marketing Officer",
+                "Digital Marketing Specialist",
+                "Business Development Officer",
+                "Business Analyst",
+                "Customer Service Officer"
+            ]
+        },
+
+        {
+            category: "Healthcare",
+            positions: [
+                "Medical Officer",
+                "Clinical Officer",
+                "Registered Nurse",
+                "Nurse",
+                "Medical Laboratory Technologist",
+                "Pharmacist",
+                "Pharmaceutical Technologist",
+                "Nutritionist",
+                "Health Records Officer",
+                "Community Health Worker"
+            ]
+        },
+
+        {
+            category: "Education",
+            positions: [
+                "Teacher",
+                "Lecturer",
+                "Tutor",
+                "Trainer",
+                "Education Officer",
+                "Teaching Assistant"
+            ]
+        },
+
+        {
+            category: "Engineering & Construction",
+            positions: [
+                "Civil Engineer",
+                "Electrical Engineer",
+                "Mechanical Engineer",
+                "Electronic Engineer",
+                "Structural Engineer",
+                "Quantity Surveyor",
+                "Architect",
+                "Construction Manager"
+            ]
+        },
+
+        {
+            category: "Procurement & Logistics",
+            positions: [
+                "Procurement Officer",
+                "Procurement Manager",
+                "Supply Chain Officer",
+                "Logistics Officer",
+                "Warehouse Officer",
+                "Transport Manager",
+                "Fleet Manager",
+                "Driver"
+            ]
+        },
+
+        {
+            category: "Hospitality & Tourism",
+            positions: [
+                "Hotel Manager",
+                "Chef",
+                "Waiter",
+                "Front Office Officer",
+                "Tour Guide",
+                "Travel Consultant"
+            ]
+        },
+
+        {
+            category: "Legal & Compliance",
+            positions: [
+                "Lawyer",
+                "Legal Officer",
+                "Legal Assistant",
+                "Compliance Officer",
+                "Risk Officer"
+            ]
+        },
+
+        {
+            category: "Media & Communications",
+            positions: [
+                "Journalist",
+                "Communications Officer",
+                "Public Relations Officer",
+                "Content Writer",
+                "Graphic Designer",
+                "Video Editor",
+                "Photographer",
+                "Social Media Manager"
+            ]
+        },
+
+        {
+            category: "Agriculture & Environment",
+            positions: [
+                "Agricultural Officer",
+                "Agronomist",
+                "Farm Manager",
+                "Veterinary Officer",
+                "Environmental Officer",
+                "Environmental Scientist"
+            ]
+        },
+
+        {
+            category: "Security & Public Safety",
+            positions: [
+                "Security Officer",
+                "Security Guard",
+                "Security Manager",
+                "Police Officer",
+                "Fire Safety Officer",
+                "Health and Safety Officer"
+            ]
+        },
+
+        {
+            category: "Research & Social Services",
+            positions: [
+                "Research Assistant",
+                "Research Officer",
+                "Laboratory Technician",
+                "Social Worker",
+                "Community Development Officer",
+                "Project Officer",
+                "Project Manager"
+            ]
+        },
+
+        {
+            category: "Real Estate",
+            positions: [
+                "Real Estate Agent",
+                "Property Manager",
+                "Estate Officer",
+                "Property Valuer"
+            ]
+        },
+
+        {
+            category: "Manufacturing & Production",
+            positions: [
+                "Production Officer",
+                "Production Manager",
+                "Quality Assurance Officer",
+                "Quality Control Officer",
+                "Machine Operator",
+                "Maintenance Technician"
+            ]
+        },
+
+        {
+            category: "General",
+            positions: [
+                "Operations Officer",
+                "Operations Manager",
+                "Business Manager",
+                "Consultant",
+                "Field Officer",
+                "Project Coordinator",
+                "Intern"
+            ]
         }
 
+    ];
 
-        /* =========================================================
-           FILE HELPERS
-        ========================================================= */
 
-        function formatFileSize(bytes) {
+    /* ==========================================
+       POSITION DROPDOWN
+    ========================================== */
 
-            if (bytes === 0) {
-                return "0 Bytes";
-            }
+    function renderPositionOptions(searchTerm = "") {
 
-            const units = [
-                "Bytes",
-                "KB",
-                "MB",
-                "GB"
-            ];
+        positionDropdown.innerHTML = "";
 
-            const index = Math.floor(
-                Math.log(bytes) / Math.log(1024)
+        const query = searchTerm.trim().toLowerCase();
+
+        let totalMatches = 0;
+
+        targetPositionCategories.forEach(group => {
+
+            const matchingPositions = group.positions.filter(item =>
+                item.toLowerCase().includes(query)
             );
 
-            return (
-                parseFloat(
-                    (bytes / Math.pow(1024, index)).toFixed(2)
-                )
-                + " "
-                + units[index]
-            );
-        }
-
-
-        function isAllowedFile(file) {
-
-            if (!file) {
-                return false;
-            }
-
-            const extension = file.name
-                .split(".")
-                .pop()
-                .toLowerCase();
-
-            return extension === "pdf" || extension === "docx";
-        }
-
-
-        function selectFile(file) {
-
-            if (!file) {
+            if (matchingPositions.length === 0) {
                 return;
             }
 
-            if (!isAllowedFile(file)) {
+            const category = document.createElement("div");
 
-                showToast(
-                    "Invalid file",
-                    "Please select a PDF or DOCX CV.",
-                    "error"
-                );
+            category.className = "position-category";
 
-                return;
-            }
+            category.textContent = group.category;
 
-            if (file.size > 10 * 1024 * 1024) {
-
-                showToast(
-                    "File too large",
-                    "The CV must not exceed 10 MB.",
-                    "error"
-                );
-
-                return;
-            }
-
-            selectedFile = file;
-
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            cvFile.files = dataTransfer.files;
-
-            fileName.textContent = file.name;
-            fileSize.textContent = formatFileSize(file.size);
-
-            filePreview.classList.add("show");
-
-            updateButtonState();
-
-            showToast(
-                "CV selected",
-                "The candidate CV is ready for registration.",
-                "success"
-            );
-        }
+            positionDropdown.appendChild(category);
 
 
-        function removeSelectedFile() {
+            matchingPositions.forEach(item => {
 
-            selectedFile = null;
-            cvFile.value = "";
+                const option = document.createElement("div");
 
-            filePreview.classList.remove("show");
+                option.className = "position-option";
 
-            fileName.textContent = "No file selected";
-            fileSize.textContent = "--";
+                option.textContent = item;
 
-            updateButtonState();
-        }
+                option.dataset.value = item;
 
-
-        /* =========================================================
-           FORM VALIDATION
-        ========================================================= */
-
-        function updateButtonState() {
-
-            const valid =
-                selectedFile !== null &&
-                candidateName.value.trim() !== "" &&
-                position.value.trim() !== "";
-
-            screenBtn.disabled = !valid;
-        }
-
-
-        function validateForm() {
-
-            if (!selectedFile) {
-
-                showToast(
-                    "CV required",
-                    "Please select the candidate's CV first.",
-                    "error"
-                );
-
-                return false;
-            }
-
-
-            if (!candidateName.value.trim()) {
-
-                showToast(
-                    "Candidate name required",
-                    "Enter the candidate's full name.",
-                    "error"
-                );
-
-                candidateName.focus();
-
-                return false;
-            }
-
-
-            if (!position.value.trim()) {
-
-                showToast(
-                    "Position required",
-                    "Select the target position.",
-                    "error"
-                );
-
-                position.focus();
-
-                return false;
-            }
-
-
-            if (
-                candidateEmail.value.trim() &&
-                !candidateEmail.checkValidity()
-            ) {
-
-                showToast(
-                    "Invalid email",
-                    "Enter a valid email address or leave it blank.",
-                    "error"
-                );
-
-                candidateEmail.focus();
-
-                return false;
-            }
-
-
-            return true;
-        }
-
-
-        /* =========================================================
-           DROPZONE
-        ========================================================= */
-
-        dropZone.addEventListener(
-            "click",
-            function () {
-                cvFile.click();
-            }
-        );
-
-
-        cvFile.addEventListener(
-            "change",
-            function () {
-
-                if (this.files && this.files.length > 0) {
-                    selectFile(this.files[0]);
-                }
-
-            }
-        );
-
-
-        [
-            "dragenter",
-            "dragover"
-        ].forEach(eventName => {
-
-            dropZone.addEventListener(
-                eventName,
-                function (event) {
+                option.addEventListener("mousedown", function(event) {
 
                     event.preventDefault();
-                    event.stopPropagation();
 
-                    dropZone.classList.add("dragover");
-                }
-            );
+                    selectPosition(item);
+
+                });
+
+                positionDropdown.appendChild(option);
+
+                totalMatches++;
+
+            });
 
         });
 
 
-        [
-            "dragleave",
-            "drop"
-        ].forEach(eventName => {
+        if (totalMatches === 0) {
 
-            dropZone.addEventListener(
-                eventName,
-                function (event) {
+            const empty = document.createElement("div");
 
-                    event.preventDefault();
-                    event.stopPropagation();
+            empty.className = "no-position";
 
-                    dropZone.classList.remove("dragover");
-                }
-            );
+            empty.textContent =
+                "No suggested position found. You can type your own job title.";
 
-        });
+            positionDropdown.appendChild(empty);
 
-
-        dropZone.addEventListener(
-            "drop",
-            function (event) {
-
-                const files = event.dataTransfer.files;
-
-                if (files && files.length > 0) {
-                    selectFile(files[0]);
-                }
-
-            }
-        );
-
-
-        removeFile.addEventListener(
-            "click",
-            function (event) {
-
-                event.stopPropagation();
-
-                removeSelectedFile();
-            }
-        );
-
-
-        /* =========================================================
-           INPUT LISTENERS
-        ========================================================= */
-
-        candidateName.addEventListener(
-            "input",
-            updateButtonState
-        );
-
-        candidateEmail.addEventListener(
-            "input",
-            updateButtonState
-        );
-
-        position.addEventListener(
-            "change",
-            updateButtonState
-        );
-
-        jobProfile.addEventListener(
-            "change",
-            updateButtonState
-        );
-
-
-        /* =========================================================
-           PIPELINE
-        ========================================================= */
-
-        function setPipelineStage(stageNumber) {
-
-            for (let i = 1; i <= 5; i++) {
-
-                const step = document.getElementById(
-                    "step" + i
-                );
-
-                if (!step) {
-                    continue;
-                }
-
-                step.classList.remove(
-                    "active",
-                    "complete"
-                );
-
-                if (i < stageNumber) {
-                    step.classList.add("complete");
-                }
-
-                if (i === stageNumber) {
-                    step.classList.add("active");
-                }
-            }
         }
 
+        activePositionIndex = -1;
 
-        function completeRegistrationPipeline() {
+    }
 
-            const step1 = document.getElementById("step1");
 
-            step1.classList.remove("active");
-            step1.classList.add("complete");
+    function openPositionDropdown() {
 
-            const step2 = document.getElementById("step2");
+        renderPositionOptions(position.value);
 
-            step2.classList.add("active");
-        }
+        positionDropdown.classList.add("open");
 
+    }
 
-        /* =========================================================
-           PROCESSING UI
-        ========================================================= */
 
-        function showProcessing() {
+    function closePositionDropdown() {
 
-            processingCard.classList.add("show");
+        positionDropdown.classList.remove("open");
 
-            progressBar.style.width = "0%";
-            progressPercent.textContent = "0%";
+        activePositionIndex = -1;
 
-            processingTitle.textContent =
-                "Uploading candidate CV...";
+    }
 
-            processingMessage.textContent =
-                "Preparing secure upload...";
 
-            resultBox.classList.remove(
-                "show",
-                "error",
-                "success"
-            );
+    function selectPosition(value) {
 
-            resultActions.classList.remove("show");
+        position.value = value;
 
-            setPipelineStage(1);
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }
-
-
-        function setProgress(value, title, message) {
-
-            const safeValue = Math.min(
-                100,
-                Math.max(0, value)
-            );
-
-            progressBar.style.width =
-                safeValue + "%";
-
-            progressPercent.textContent =
-                Math.round(safeValue) + "%";
-
-            if (title) {
-                processingTitle.textContent = title;
-            }
-
-            if (message) {
-                processingMessage.textContent = message;
-            }
-        }
-
-
-        /* =========================================================
-           BACKEND RESPONSE
-        ========================================================= */
-
-        async function parseResponse(xhr) {
-
-            const responseText = xhr.responseText || "";
-
-            try {
-                return JSON.parse(responseText);
-            }
-
-            catch (error) {
-
-                return {
-                    success: false,
-                    message:
-                        responseText ||
-                        "The server returned an unexpected response."
-                };
-            }
-        }
-
-
-        /* =========================================================
-           UPLOAD TO FLASK
-        ========================================================= */
-
-        function uploadCandidate() {
-
-            if (!validateForm()) {
-                return;
-            }
-
-
-            const formData = new FormData();
-
-            formData.append(
-                "cv_file",
-                selectedFile
-            );
-
-            formData.append(
-                "candidate_name",
-                candidateName.value.trim()
-            );
-
-            formData.append(
-                "email",
-                candidateEmail.value.trim()
-            );
-
-            formData.append(
-                "position",
-                position.value
-            );
-
-            formData.append(
-                "job_profile",
-                jobProfile.value
-            );
-
-
-            showProcessing();
-
-            screenBtn.disabled = true;
-            clearBtn.disabled = true;
-
-
-            const xhr = new XMLHttpRequest();
-
-            currentXhr = xhr;
-
-
-            /* -----------------------------------------------------
-               UPLOAD PROGRESS
-            ----------------------------------------------------- */
-
-            xhr.upload.addEventListener(
-                "progress",
-                function (event) {
-
-                    if (!event.lengthComputable) {
-                        return;
-                    }
-
-                    const percent =
-                        (event.loaded / event.total) * 100;
-
-                    setProgress(
-                        percent,
-                        "Uploading candidate CV...",
-                        "Transferring CV to the recruitment server..."
-                    );
-                }
-            );
-
-
-            /* -----------------------------------------------------
-               REQUEST COMPLETE
-            ----------------------------------------------------- */
-
-            xhr.addEventListener(
-                "load",
-                async function () {
-
-                    currentXhr = null;
-
-                    clearBtn.disabled = false;
-
-                    const data =
-                        await parseResponse(xhr);
-
-
-                    if (
-                        xhr.status >= 200 &&
-                        xhr.status < 300 &&
-                        data.success
-                    ) {
-
-                        setProgress(
-                            100,
-                            "Candidate registered successfully",
-                            "The CV has been stored and the candidate is ready for AI analysis."
-                        );
-
-
-                        completeRegistrationPipeline();
-
-
-                        resultBox.classList.remove("error");
-                        resultBox.classList.add(
-                            "show",
-                            "success"
-                        );
-
-
-                        resultTitle.textContent =
-                            "✓ Candidate Registered";
-
-
-                        let message =
-                            data.message ||
-                            "Candidate registered successfully.";
-
-
-                        if (data.candidate_id) {
-
-                            message +=
-                                " Candidate ID: "
-                                + data.candidate_id
-                                + ".";
-                        }
-
-
-                        message +=
-                            " The next stage is AI CV analysis.";
-
-
-                        resultText.textContent = message;
-
-
-                        resultActions.classList.add("show");
-
-
-                        screenBtn.textContent =
-                            "✓ Candidate Registered";
-
-                        screenBtn.disabled = true;
-
-
-                        showToast(
-                            "Registration successful",
-                            "Candidate has been added to the database.",
-                            "success"
-                        );
-
-                    }
-
-                    else {
-
-                        const errorMessage =
-                            data.message ||
-                            "Unable to register the candidate.";
-
-
-                        resultBox.classList.remove("success");
-                        resultBox.classList.add(
-                            "show",
-                            "error"
-                        );
-
-
-                        resultTitle.textContent =
-                            "✕ Registration Failed";
-
-
-                        resultText.textContent =
-                            errorMessage;
-
-
-                        resultActions.classList.remove(
-                            "show"
-                        );
-
-
-                        setProgress(
-                            0,
-                            "Registration failed",
-                            errorMessage
-                        );
-
-
-                        updateButtonState();
-
-
-                        showToast(
-                            "Registration failed",
-                            errorMessage,
-                            "error"
-                        );
-                    }
-                }
-            );
-
-
-            /* -----------------------------------------------------
-               NETWORK ERROR
-            ----------------------------------------------------- */
-
-            xhr.addEventListener(
-                "error",
-                function () {
-
-                    currentXhr = null;
-
-                    clearBtn.disabled = false;
-
-                    const message =
-                        "Unable to connect to the Flask server. Make sure app.py is running.";
-
-
-                    resultBox.classList.remove(
-                        "success"
-                    );
-
-                    resultBox.classList.add(
-                        "show",
-                        "error"
-                    );
-
-
-                    resultTitle.textContent =
-                        "✕ Server Connection Error";
-
-
-                    resultText.textContent =
-                        message;
-
-
-                    setProgress(
-                        0,
-                        "Upload failed",
-                        message
-                    );
-
-
-                    updateButtonState();
-
-
-                    showToast(
-                        "Server error",
-                        message,
-                        "error"
-                    );
-                }
-            );
-
-
-            /* -----------------------------------------------------
-               REQUEST ABORT
-            ----------------------------------------------------- */
-
-            xhr.addEventListener(
-                "abort",
-                function () {
-
-                    currentXhr = null;
-
-                    clearBtn.disabled = false;
-
-                    setProgress(
-                        0,
-                        "Upload cancelled",
-                        "The upload was cancelled."
-                    );
-
-
-                    updateButtonState();
-                }
-            );
-
-
-            xhr.open(
-                "POST",
-                "{{ url_for('upload_cv') }}",
-                true
-            );
-
-
-            xhr.setRequestHeader(
-                "X-Requested-With",
-                "XMLHttpRequest"
-            );
-
-
-            xhr.send(formData);
-        }
-
-
-        /* =========================================================
-           START BUTTON
-        ========================================================= */
-
-        screenBtn.addEventListener(
-            "click",
-            function () {
-                uploadCandidate();
-            }
-        );
-
-
-        /* =========================================================
-           CLEAR FORM
-        ========================================================= */
-
-        clearBtn.addEventListener(
-            "click",
-            function () {
-
-                if (currentXhr) {
-                    currentXhr.abort();
-                }
-
-
-                candidateName.value = "";
-                candidateEmail.value = "";
-                position.value = "";
-                jobProfile.value = "";
-
-                removeSelectedFile();
-
-
-                processingCard.classList.remove(
-                    "show"
-                );
-
-
-                resultBox.classList.remove(
-                    "show",
-                    "success",
-                    "error"
-                );
-
-
-                resultActions.classList.remove(
-                    "show"
-                );
-
-
-                progressBar.style.width = "0%";
-                progressPercent.textContent = "0%";
-
-
-                processingTitle.textContent =
-                    "Uploading candidate CV...";
-
-
-                processingMessage.textContent =
-                    "Preparing secure upload...";
-
-
-                screenBtn.textContent =
-                    "✦ Register & Prepare CV";
-
-
-                clearBtn.disabled = false;
-
-
-                setPipelineStage(1);
-
-                updateButtonState();
-
-
-                showToast(
-                    "Form cleared",
-                    "Candidate details and selected CV have been cleared.",
-                    "success"
-                );
-            }
-        );
-
-
-        /* =========================================================
-           INITIAL STATE
-        ========================================================= */
+        closePositionDropdown();
 
         updateButtonState();
 
-        setPipelineStage(1);
-    </script>
+    }
+
+
+    /* ==========================================
+       POSITION EVENTS
+    ========================================== */
+
+    position.addEventListener("focus", function() {
+
+        openPositionDropdown();
+
+    });
+
+
+    position.addEventListener("input", function() {
+
+        openPositionDropdown();
+
+        renderPositionOptions(position.value);
+
+        updateButtonState();
+
+    });
+
+
+    positionToggle.addEventListener("click", function() {
+
+        if (positionDropdown.classList.contains("open")) {
+
+            closePositionDropdown();
+
+        } else {
+
+            openPositionDropdown();
+
+            position.focus();
+
+        }
+
+    });
+
+
+    positionClear.addEventListener("click", function() {
+
+        position.value = "";
+
+        updateButtonState();
+
+        position.focus();
+
+        openPositionDropdown();
+
+    });
+
+
+    position.addEventListener("keydown", function(event) {
+
+        const options = [
+            ...positionDropdown.querySelectorAll(".position-option")
+        ];
+
+        if (event.key === "ArrowDown") {
+
+            event.preventDefault();
+
+            if (!positionDropdown.classList.contains("open")) {
+                openPositionDropdown();
+            }
+
+            if (options.length > 0) {
+
+                activePositionIndex =
+                    Math.min(
+                        activePositionIndex + 1,
+                        options.length - 1
+                    );
+
+                updateActivePosition(options);
+
+            }
+
+        }
+
+
+        if (event.key === "ArrowUp") {
+
+            event.preventDefault();
+
+            if (options.length > 0) {
+
+                activePositionIndex =
+                    Math.max(
+                        activePositionIndex - 1,
+                        0
+                    );
+
+                updateActivePosition(options);
+
+            }
+
+        }
+
+
+        if (event.key === "Enter") {
+
+            if (
+                positionDropdown.classList.contains("open") &&
+                activePositionIndex >= 0 &&
+                options[activePositionIndex]
+            ) {
+
+                event.preventDefault();
+
+                selectPosition(
+                    options[activePositionIndex].dataset.value
+                );
+
+            }
+
+        }
+
+
+        if (event.key === "Escape") {
+
+            closePositionDropdown();
+
+        }
+
+    });
+
+
+    function updateActivePosition(options) {
+
+        options.forEach((option, index) => {
+
+            option.classList.toggle(
+                "active",
+                index === activePositionIndex
+            );
+
+        });
+
+        if (options[activePositionIndex]) {
+
+            options[activePositionIndex].scrollIntoView({
+                block: "nearest"
+            });
+
+        }
+
+    }
+
+
+    document.addEventListener("click", function(event) {
+
+        const wrapper = document.querySelector(".position-wrapper");
+
+        if (!wrapper.contains(event.target)) {
+
+            closePositionDropdown();
+
+        }
+
+    });
+
+
+    /* ==========================================
+       FILE HANDLING
+    ========================================== */
+
+    dropZone.addEventListener("click", function() {
+
+        cvFile.click();
+
+    });
+
+
+    cvFile.addEventListener("change", function() {
+
+        if (cvFile.files.length > 0) {
+
+            handleFile(cvFile.files[0]);
+
+        }
+
+    });
+
+
+    dropZone.addEventListener("dragover", function(event) {
+
+        event.preventDefault();
+
+        dropZone.classList.add("dragover");
+
+    });
+
+
+    dropZone.addEventListener("dragleave", function() {
+
+        dropZone.classList.remove("dragover");
+
+    });
+
+
+    dropZone.addEventListener("drop", function(event) {
+
+        event.preventDefault();
+
+        dropZone.classList.remove("dragover");
+
+        if (event.dataTransfer.files.length > 0) {
+
+            handleFile(event.dataTransfer.files[0]);
+
+        }
+
+    });
+
+
+    function handleFile(file) {
+
+        const extension =
+            file.name.split(".").pop().toLowerCase();
+
+        const allowed =
+            ["pdf", "docx"];
+
+
+        if (!allowed.includes(extension)) {
+
+            showAlert(
+                "Please upload a PDF or DOCX file.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (file.size > 10 * 1024 * 1024) {
+
+            showAlert(
+                "The selected file is larger than the 10MB limit.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        selectedFile = file;
+
+        fileName.textContent = file.name;
+
+        fileSize.textContent = formatFileSize(file.size);
+
+        filePreview.style.display = "flex";
+
+        showAlert("", "");
+
+        updateButtonState();
+
+    }
+
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+
+            return bytes + " B";
+
+        }
+
+        if (bytes < 1024 * 1024) {
+
+            return (bytes / 1024).toFixed(1) + " KB";
+
+        }
+
+        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+
+    }
+
+
+    function removeSelectedFile() {
+
+        selectedFile = null;
+
+        cvFile.value = "";
+
+        filePreview.style.display = "none";
+
+        fileName.textContent = "";
+
+        fileSize.textContent = "";
+
+        updateButtonState();
+
+    }
+
+
+    removeFile.addEventListener(
+        "click",
+        removeSelectedFile
+    );
+
+
+    /* ==========================================
+       FORM VALIDATION
+    ========================================== */
+
+    function updateButtonState() {
+
+        const valid =
+            selectedFile !== null &&
+            candidateName.value.trim() !== "" &&
+            position.value.trim() !== "";
+
+        screenBtn.disabled = !valid;
+
+    }
+
+
+    candidateName.addEventListener(
+        "input",
+        updateButtonState
+    );
+
+
+    candidateEmail.addEventListener(
+        "input",
+        updateButtonState
+    );
+
+
+    jobProfile.addEventListener(
+        "change",
+        updateButtonState
+    );
+
+
+    function validateForm() {
+
+        if (!selectedFile) {
+
+            showAlert(
+                "Please upload a candidate CV.",
+                "error"
+            );
+
+            return false;
+
+        }
+
+
+        if (!candidateName.value.trim()) {
+
+            showAlert(
+                "Please enter the candidate name.",
+                "error"
+            );
+
+            candidateName.focus();
+
+            return false;
+
+        }
+
+
+        if (!position.value.trim()) {
+
+            showAlert(
+                "Please enter or select the target position.",
+                "error"
+            );
+
+            position.focus();
+
+            return false;
+
+        }
+
+
+        if (
+            candidateEmail.value.trim() !== "" &&
+            !isValidEmail(candidateEmail.value.trim())
+        ) {
+
+            showAlert(
+                "Please enter a valid email address.",
+                "error"
+            );
+
+            candidateEmail.focus();
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+
+    function isValidEmail(email) {
+
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    }
+
+
+    /* ==========================================
+       ALERT
+    ========================================== */
+
+    function showAlert(message, type) {
+
+        alertBox.className = "alert";
+
+        alertBox.textContent = message;
+
+        if (message && type) {
+
+            alertBox.classList.add(type);
+
+        }
+
+    }
+
+
+    /* ==========================================
+       CLEAR FORM
+    ========================================== */
+
+    clearBtn.addEventListener("click", function() {
+
+        candidateName.value = "";
+
+        candidateEmail.value = "";
+
+        position.value = "";
+
+        jobProfile.value = "";
+
+        removeSelectedFile();
+
+        showAlert("", "");
+
+        closePositionDropdown();
+
+        updateButtonState();
+
+    });
+
+
+    /* ==========================================
+       SUBMIT
+    ========================================== */
+
+    uploadForm.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+
+        if (!validateForm()) {
+
+            return;
+
+        }
+
+
+        loadingOverlay.style.display = "flex";
+
+
+        const formData = new FormData();
+
+
+        formData.append(
+            "cv_file",
+            selectedFile
+        );
+
+
+        formData.append(
+            "candidate_name",
+            candidateName.value.trim()
+        );
+
+
+        formData.append(
+            "email",
+            candidateEmail.value.trim()
+        );
+
+
+        formData.append(
+            "position",
+            position.value.trim()
+        );
+
+
+        formData.append(
+            "job_profile",
+            jobProfile.value
+        );
+
+
+        const xhr = new XMLHttpRequest();
+
+
+        xhr.open(
+            "POST",
+            "{{ url_for('upload_cv') }}",
+            true
+        );
+
+
+        xhr.setRequestHeader(
+            "X-Requested-With",
+            "XMLHttpRequest"
+        );
+
+
+        xhr.onload = function() {
+
+            loadingOverlay.style.display = "none";
+
+
+            if (
+                xhr.status >= 200 &&
+                xhr.status < 300
+            ) {
+
+                try {
+
+                    const response =
+                        JSON.parse(xhr.responseText);
+
+
+                    if (response.success) {
+
+                        showAlert(
+                            response.message ||
+                            "CV uploaded successfully. Redirecting to AI Screening...",
+                            "success"
+                        );
+
+                        // Prefer the screening_url returned by the new backend
+                        const redirectUrl =
+                            response.screening_url ||
+                            (response.candidate_id
+                                ? "/screening?candidate_id=" + response.candidate_id
+                                : "/screening");
+
+                        setTimeout(function() {
+                            window.location.href = redirectUrl;
+                        }, 700);
+
+                    } else {
+
+                        showAlert(
+                            response.message ||
+                            "Upload could not be completed.",
+                            "error"
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    /*
+                     * Some Flask responses may return
+                     * a normal redirect/HTML page instead
+                     * of JSON.
+                     */
+
+                    if (
+                        xhr.responseURL &&
+                        xhr.responseURL !== window.location.href
+                    ) {
+
+                        window.location.href =
+                            xhr.responseURL;
+
+                    } else {
+
+                        showAlert(
+                            "CV uploaded successfully. Please go to AI Screening.",
+                            "success"
+                        );
+
+                    }
+
+                }
+
+            } else {
+
+                let message =
+                    "An error occurred while uploading the CV.";
+
+                try {
+
+                    const response =
+                        JSON.parse(xhr.responseText);
+
+                    if (response.message) {
+
+                        message =
+                            response.message;
+
+                    }
+
+                } catch (error) {
+
+                    // Keep default message.
+
+                }
+
+                showAlert(
+                    message,
+                    "error"
+                );
+
+            }
+
+        };
+
+
+        xhr.onerror = function() {
+
+            loadingOverlay.style.display = "none";
+
+            showAlert(
+                "Unable to connect to the server. Make sure Flask is running.",
+                "error"
+            );
+
+        };
+
+
+        xhr.send(formData);
+
+    });
+
+
+    /* ==========================================
+       INITIAL STATE
+    ========================================== */
+
+    updateButtonState();
+
+</script>
 
 </body>
 </html>

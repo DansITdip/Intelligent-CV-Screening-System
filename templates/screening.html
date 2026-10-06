@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Screening | CV SCREEN AI</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --bg-main: #07111f;
+        --bg-sidebar: #091625;
+        --bg-card: #0d1b2d;
+        --bg-card-light: #12243a;
+        --border: #1c3550;
+        --primary: #1d9bf0;
+        --primary-dark: #0877c9;
+        --cyan: #22d3ee;
+        --text: #f4f7fb;
+        --muted: #8fa5bb;
+        --green: #22c55e;
+        --orange: #f59e0b;
+        --red: #ef4444;
+        --shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--bg-main);
+        color: var(--text);
+        min-height: 100vh;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* =========================
+       LAYOUT
+    ========================= */
+
+    .app {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar {
+        width: 255px;
+        background: var(--bg-sidebar);
+        border-right: 1px solid var(--border);
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .brand {
+        height: 82px;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .brand-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary), var(--cyan));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        font-weight: bold;
+        color: white;
+        box-shadow: 0 8px 25px rgba(29, 155, 240, 0.25);
+    }
+
+    .brand-text h2 {
+        font-size: 18px;
+        letter-spacing: 0.5px;
+    }
+
+    .brand-text span {
+        display: block;
+        color: var(--cyan);
+        font-size: 9px;
+        letter-spacing: 1.8px;
+        margin-top: 3px;
+        font-weight: bold;
+    }
+
+    .menu-label {
+        padding: 24px 22px 10px;
+        color: #60788f;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: bold;
+    }
+
+    .nav {
+        padding: 0 12px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 13px 14px;
+        margin-bottom: 5px;
+        border-radius: 9px;
+        color: var(--muted);
+        font-size: 14px;
+        transition: 0.2s ease;
+    }
+
+    .nav-item:hover {
+        background: rgba(29, 155, 240, 0.08);
+        color: white;
+    }
+
+    .nav-item.active {
+        background: linear-gradient(
+            90deg,
+            rgba(29, 155, 240, 0.20),
+            rgba(29, 155, 240, 0.06)
+        );
+        color: white;
+        border-left: 3px solid var(--primary);
+    }
+
+    .nav-icon {
+        width: 24px;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .sidebar-bottom {
+        margin-top: auto;
+        padding: 12px;
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .main {
+        margin-left: 255px;
+        width: calc(100% - 255px);
+    }
+
+    .topbar {
+        height: 82px;
+        padding: 0 32px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(7, 17, 31, 0.95);
+    }
+
+    .topbar-title {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .topbar-title strong {
+        color: white;
+        display: block;
+        font-size: 18px;
+        margin-bottom: 3px;
+    }
+
+    .profile {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+    }
+
+    .avatar {
+        width: 39px;
+        height: 39px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1d9bf0, #06b6d4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    .profile-info strong {
+        display: block;
+        font-size: 13px;
+    }
+
+    .profile-info span {
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    /* =========================
+       CONTENT
+    ========================= */
+
+    .content {
+        padding: 32px;
+        max-width: 1500px;
+    }
+
+    .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 28px;
+        gap: 20px;
+    }
+
+    .page-heading h1 {
+        font-size: 29px;
+        margin-bottom: 8px;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .engine-status {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 15px;
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        border-radius: 9px;
+        color: #7ee2a1;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--green);
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
+    }
+
+    /* =========================
+       ENGINE HERO
+    ========================= */
+
+    .engine-card {
+        background:
+            radial-gradient(circle at 90% 20%, rgba(34, 211, 238, 0.12), transparent 28%),
+            radial-gradient(circle at 10% 90%, rgba(29, 155, 240, 0.10), transparent 30%),
+            var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: var(--shadow);
+    }
+
+    .engine-header {
+        display: flex;
+        align-items: center;
+        gap: 17px;
+    }
+
+    .brain-icon {
+        width: 57px;
+        height: 57px;
+        border-radius: 15px;
+        background: rgba(29, 155, 240, 0.13);
+        border: 1px solid rgba(34, 211, 238, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    .engine-header h2 {
+        font-size: 19px;
+        margin-bottom: 5px;
+    }
+
+    .engine-header p {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .engine-features {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 22px;
+    }
+
+    .feature {
+        padding: 15px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.015);
+        border-radius: 10px;
+    }
+
+    .feature-icon {
+        font-size: 18px;
+        margin-bottom: 9px;
+    }
+
+    .feature strong {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .feature span {
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    /* =========================
+       WORKSPACE
+    ========================= */
+
+    .workspace {
+        display: grid;
+        grid-template-columns: 1.35fr 0.65fr;
+        gap: 24px;
+    }
+
+    .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 21px;
+    }
+
+    .card-header h2 {
+        font-size: 17px;
+    }
+
+    .card-header p {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .step.active {
+        color: var(--cyan);
+    }
+
+    .step-number {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--bg-card-light);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .step.active .step-number {
+        background: rgba(29, 155, 240, 0.15);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 8px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        display: block;
+        color: #c4d2df;
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 7px;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #091725;
+        color: white;
+        padding: 12px 13px;
+        outline: none;
+        font-family: inherit;
+        font-size: 12px;
+    }
+
+    textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.08);
+    }
+
+    input:disabled,
+    select:disabled {
+        opacity: 0.75;
+        cursor: not-allowed;
+    }
+
+    select option {
+        background: #0d1b2d;
+    }
+
+    .hint {
+        color: #667f96;
+        font-size: 10px;
+        margin-top: 6px;
+    }
+
+    /* Candidate ready banner */
+    .candidate-ready {
+        display: none;
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.22);
+        color: #9be7b3;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .candidate-ready strong {
+        color: #b8f0c9;
+    }
+
+    .no-candidate {
+        display: none;
+        margin-bottom: 18px;
+        padding: 16px;
+        border-radius: 10px;
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        color: #fcd34d;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    /* =========================
+       BUTTONS
+    ========================= */
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 22px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 18px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .btn-primary {
+        color: white;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        box-shadow: 0 7px 18px rgba(29, 155, 240, 0.18);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-secondary {
+        background: #12243a;
+        color: #b8c8d8;
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        background: #172c44;
+        color: white;
+    }
+
+    /* =========================
+       RIGHT PANEL
+    ========================= */
+
+    .info-box {
+        border: 1px solid var(--border);
+        background: #0a1726;
+        border-radius: 11px;
+        padding: 17px;
+        margin-bottom: 14px;
+    }
+
+    .info-box h3 {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .info-list {
+        list-style: none;
+    }
+
+    .info-list li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin-bottom: 12px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .check {
+        color: var(--green);
+        font-weight: bold;
+    }
+
+    .warning {
+        color: var(--orange);
+        font-weight: bold;
+    }
+
+    .score-preview {
+        text-align: center;
+        padding: 22px 15px;
+        border-radius: 11px;
+        background:
+            radial-gradient(circle, rgba(29,155,240,0.10), transparent 65%),
+            #0a1726;
+        border: 1px solid var(--border);
+    }
+
+    .score-circle {
+        width: 105px;
+        height: 105px;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        border: 7px solid #1a3650;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .score-circle span {
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .score-preview h3 {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .score-preview p {
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    /* =========================
+       BOTTOM STATUS
+    ========================= */
+
+    .status-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 24px;
+    }
+
+    .status-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        padding: 16px;
+    }
+
+    .status-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 9px;
+    }
+
+    .status-card strong {
+        font-size: 12px;
+    }
+
+    .status-value {
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 8, 15, 0.82);
+        backdrop-filter: blur(6px);
+        z-index: 5000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loading-box {
+        width: min(400px, calc(100% - 40px));
+        background: #0b1b2c;
+        border: 1px solid rgba(0,200,255,0.15);
+        border-radius: 16px;
+        padding: 28px;
+        text-align: center;
+    }
+
+    .spinner {
+        width: 44px;
+        height: 44px;
+        border: 3px solid rgba(0,200,255,0.14);
+        border-top-color: #00c8ff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .loading-box h3 {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    .loading-box p {
+        color: #74899d;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 1100px) {
+        .engine-features {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .workspace {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .sidebar {
+            width: 70px;
+        }
+
+        .brand-text,
+        .menu-label,
+        .nav-item span:not(.nav-icon) {
+            display: none;
+        }
+
+        .brand {
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .nav-item {
+            justify-content: center;
+        }
+
+        .main {
+            margin-left: 70px;
+            width: calc(100% - 70px);
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .form-grid,
+        .status-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-heading {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 550px) {
+        .topbar {
+            padding: 0 18px;
+        }
+
+        .profile-info {
+            display: none;
+        }
+
+        .engine-features {
+            grid-template-columns: 1fr;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">AI</div>
+
+            <div class="brand-text">
+                <h2>CV SCREEN</h2>
+                <span>RECRUITMENT INTELLIGENCE</span>
+            </div>
+        </div>
+
+        <div class="menu-label">Main Menu</div>
+
+        <nav class="nav">
+
+            <a href="{{ url_for('dashboard') }}" class="nav-item">
+                <span class="nav-icon">▦</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('candidates') }}" class="nav-item">
+                <span class="nav-icon">◉</span>
+                <span>Candidates</span>
+            </a>
+
+            <a href="{{ url_for('jobs') }}" class="nav-item">
+                <span class="nav-icon">▣</span>
+                <span>Jobs</span>
+            </a>
+
+            <a href="{{ url_for('screening') }}" class="nav-item active">
+                <span class="nav-icon">⌕</span>
+                <span>AI Screening</span>
+            </a>
+
+            <a href="{{ url_for('reports') }}" class="nav-item">
+                <span class="nav-icon">▤</span>
+                <span>Reports</span>
+            </a>
+
+        </nav>
+
+        <div class="menu-label">System</div>
+
+        <nav class="nav">
+
+            <a href="{{ url_for('settings') }}" class="nav-item">
+                <span class="nav-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}" class="nav-item">
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="main">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div class="topbar-title">
+                <strong>AI Screening</strong>
+                Candidate evaluation workspace
+            </div>
+
+            <div class="profile">
+
+                <div class="avatar">AD</div>
+
+                <div class="profile-info">
+                    <strong>Administrator</strong>
+                    <span>System Admin</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+            <!-- PAGE HEADING -->
+
+            <div class="page-heading">
+
+                <div>
+                    <h1>AI Candidate Screening</h1>
+
+                    <p>
+                        Review the uploaded candidate and run the AI matching engine
+                        against the selected job profile.
+                    </p>
+                </div>
+
+                <div class="engine-status">
+                    <span class="status-dot"></span>
+                    {% if screening_engine_available %}
+                        AI Screening Engine Active
+                    {% else %}
+                        AI Engine Unavailable
+                    {% endif %}
+                </div>
+
+            </div>
+
+
+            <!-- ENGINE INFORMATION -->
+
+            <div class="engine-card">
+
+                <div class="engine-header">
+
+                    <div class="brain-icon">🧠</div>
+
+                    <div>
+                        <h2>Intelligent Screening Engine</h2>
+
+                        <p>
+                            Automated CV analysis, requirement matching and
+                            candidate-job compatibility assessment.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="engine-features">
+
+                    <div class="feature">
+                        <div class="feature-icon">📄</div>
+                        <strong>CV Extraction</strong>
+                        <span>Extract candidate information and skills.</span>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">🎯</div>
+                        <strong>Smart Matching</strong>
+                        <span>Compare candidate profile with job requirements.</span>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">📊</div>
+                        <strong>Match Scoring</strong>
+                        <span>Calculate candidate-job compatibility.</span>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">📑</div>
+                        <strong>AI Insights</strong>
+                        <span>Identify strengths, gaps and recommendations.</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- WORKSPACE -->
+
+            <div class="workspace">
+
+                <!-- LEFT: SCREENING FORM -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <h2>Run AI Screening</h2>
+                            <p>Confirm the candidate and job profile, then start screening.</p>
+                        </div>
+
+                        <div class="step active">
+                            <span class="step-number">2</span>
+                            <span>Screen Candidate</span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Candidate ready banner -->
+                    <div class="candidate-ready" id="candidateReady">
+                        <strong>Candidate ready.</strong>
+                        The CV has been uploaded. Review the details below and click
+                        <strong>Start AI Screening</strong>.
+                    </div>
+
+                    <!-- No candidate message -->
+                    <div class="no-candidate" id="noCandidate">
+                        No candidate is loaded for screening.
+                        Please <a href="{{ url_for('upload_cv') }}" style="color:#22d3ee;text-decoration:underline;">upload a CV first</a>
+                        or select a candidate from the Candidates page and use Rescreen.
+                    </div>
+
+
+                    <!-- CANDIDATE DETAILS -->
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="candidate_name">
+                                Candidate Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="candidate_name"
+                                placeholder="Candidate name"
+                                disabled
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="email">
+                                Candidate Email
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="candidate@email.com"
+                                disabled
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="position">
+                                Target Position
+                            </label>
+
+                            <input
+                                type="text"
+                                id="position"
+                                placeholder="Target position"
+                                disabled
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="job_profile">
+                                Job Profile
+                            </label>
+
+                            <select id="job_profile">
+
+                                <option value="">
+                                    Select Job Profile
+                                </option>
+
+                                {% if jobs %}
+                                    {% for job in jobs %}
+                                        <option value="{{ job.job_title }}">
+                                            {{ job.job_title }}
+                                            {% if job.department %} — {{ job.department }}{% endif %}
+                                        </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="Software Developer">Software Developer</option>
+                                    <option value="Web Developer">Web Developer</option>
+                                    <option value="Network Administrator">Network Administrator</option>
+                                    <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+                                    <option value="IT Support Specialist">IT Support Specialist</option>
+                                    <option value="Data Analyst">Data Analyst</option>
+                                {% endif %}
+
+                            </select>
+
+                            <div class="hint">
+                                This is the profile the AI engine will match against.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="actions">
+
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            id="startBtn"
+                            onclick="startScreening()"
+                            disabled
+                        >
+                            🧠 Start AI Screening
+                        </button>
+
+                        <a
+                            href="{{ url_for('upload_cv') }}"
+                            class="btn btn-secondary"
+                        >
+                            📄 Upload Another CV
+                        </a>
+
+                        <a
+                            href="{{ url_for('candidates') }}"
+                            class="btn btn-secondary"
+                        >
+                            ◉ Candidates
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT: INFORMATION -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <h2>Screening Intelligence</h2>
+                            <p>What the engine evaluates</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <h3>Evaluation Criteria</h3>
+
+                        <ul class="info-list">
+
+                            <li>
+                                <span class="check">✓</span>
+                                <span>
+                                    Technical and professional skills
+                                </span>
+                            </li>
+
+                            <li>
+                                <span class="check">✓</span>
+                                <span>
+                                    Education and qualifications
+                                </span>
+                            </li>
+
+                            <li>
+                                <span class="check">✓</span>
+                                <span>
+                                    Work experience and responsibilities
+                                </span>
+                            </li>
+
+                            <li>
+                                <span class="check">✓</span>
+                                <span>
+                                    Job-specific requirements
+                                </span>
+                            </li>
+
+                            <li>
+                                <span class="warning">!</span>
+                                <span>
+                                    Missing or partially matched requirements
+                                </span>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+
+                    <div class="score-preview">
+
+                        <div class="score-circle">
+                            <span id="previewScore">--%</span>
+                        </div>
+
+                        <h3>AI Match Score</h3>
+
+                        <p>
+                            The candidate score will appear after screening.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SYSTEM STATUS -->
+
+            <div class="status-grid">
+
+                <div class="status-card">
+
+                    <div class="status-card-top">
+                        <strong>CV Processing</strong>
+                        <span class="status-dot"></span>
+                    </div>
+
+                    <div class="status-value">
+                        Ready to process documents
+                    </div>
+
+                </div>
+
+
+                <div class="status-card">
+
+                    <div class="status-card-top">
+                        <strong>AI Matching</strong>
+                        <span class="status-dot"></span>
+                    </div>
+
+                    <div class="status-value">
+                        Matching engine available
+                    </div>
+
+                </div>
+
+
+                <div class="status-card">
+
+                    <div class="status-card-top">
+                        <strong>Results & Reports</strong>
+                        <span class="status-dot"></span>
+                    </div>
+
+                    <div class="status-value">
+                        Automated screening reports enabled
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <h3>AI Screening in Progress</h3>
+        <p>
+            Extracting CV information, identifying skills and
+            evaluating candidate suitability against the selected job profile...
+        </p>
+    </div>
+</div>
+
+
+<!-- Safe data injection (no editor errors) -->
+<script type="application/json" id="uploaded-cv-data">
+{{ uploaded_cv | tojson }}
+</script>
+
+<script>
+    // =========================================================
+    // DATA FROM BACKEND
+    // =========================================================
+
+    let uploadedCv = null;
+    try {
+        const raw = document.getElementById("uploaded-cv-data").textContent;
+        uploadedCv = JSON.parse(raw || "null");
+    } catch (e) {
+        uploadedCv = null;
+    }
+
+    // Candidate ID can also come from the URL query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryCandidateId = urlParams.get("candidate_id");
+
+    let currentCandidateId = null;
+
+    // Prefer uploaded_cv session data, fall back to query string
+    if (uploadedCv && uploadedCv.candidate_id) {
+        currentCandidateId = uploadedCv.candidate_id;
+    } else if (queryCandidateId) {
+        currentCandidateId = parseInt(queryCandidateId, 10);
+    }
+
+
+    // =========================================================
+    // ELEMENTS
+    // =========================================================
+
+    const candidateNameEl = document.getElementById("candidate_name");
+    const emailEl         = document.getElementById("email");
+    const positionEl      = document.getElementById("position");
+    const jobProfileEl    = document.getElementById("job_profile");
+    const startBtn        = document.getElementById("startBtn");
+    const candidateReady  = document.getElementById("candidateReady");
+    const noCandidate     = document.getElementById("noCandidate");
+    const loadingOverlay  = document.getElementById("loadingOverlay");
+
+
+    // =========================================================
+    // PREFILL FROM UPLOADED CANDIDATE
+    // =========================================================
+
+    function prefillCandidate() {
+        if (!currentCandidateId) {
+            noCandidate.style.display = "block";
+            startBtn.disabled = true;
+            return;
+        }
+
+        candidateReady.style.display = "block";
+
+        if (uploadedCv) {
+            candidateNameEl.value = uploadedCv.candidate_name || "";
+            emailEl.value         = uploadedCv.email || "";
+            positionEl.value      = uploadedCv.position || "";
+
+            // Pre-select the job profile that was chosen at upload time
+            if (uploadedCv.job_profile) {
+                let found = false;
+                for (let i = 0; i < jobProfileEl.options.length; i++) {
+                    if (jobProfileEl.options[i].value === uploadedCv.job_profile) {
+                        jobProfileEl.selectedIndex = i;
+                        found = true;
+                        break;
+                    }
+                }
+                // If not found, add it as a temporary option
+                if (!found && uploadedCv.job_profile) {
+                    const opt = document.createElement("option");
+                    opt.value = uploadedCv.job_profile;
+                    opt.textContent = uploadedCv.job_profile + " (from upload)";
+                    opt.selected = true;
+                    jobProfileEl.appendChild(opt);
+                }
+            }
+        }
+
+        updateStartButton();
+    }
+
+
+    function updateStartButton() {
+        const hasProfile = jobProfileEl.value.trim() !== "";
+        startBtn.disabled = !currentCandidateId || !hasProfile;
+    }
+
+
+    jobProfileEl.addEventListener("change", updateStartButton);
+
+
+    // =========================================================
+    // START AI SCREENING
+    // =========================================================
+
+    function startScreening() {
+
+        if (!currentCandidateId) {
+            alert("No candidate is loaded. Please upload a CV first.");
+            return;
+        }
+
+        const jobProfile = jobProfileEl.value.trim();
+
+        if (!jobProfile) {
+            alert("Please select a Job Profile before starting the screening.");
+            return;
+        }
+
+        loadingOverlay.style.display = "flex";
+        startBtn.disabled = true;
+        startBtn.innerHTML = "⏳ Screening...";
+
+        const formData = new FormData();
+        formData.append("job_profile", jobProfile);
+
+        if (positionEl.value.trim()) {
+            formData.append("position", positionEl.value.trim());
+        }
+
+        fetch(`/api/screen/${currentCandidateId}`, {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            loadingOverlay.style.display = "none";
+
+            if (data.success) {
+                const resultsUrl = data.results_url || `/results/${currentCandidateId}`;
+                window.location.href = resultsUrl;
+                return;
+            }
+
+            alert(data.message || "AI screening could not be completed.");
+            startBtn.disabled = false;
+            startBtn.innerHTML = "🧠 Start AI Screening";
+            updateStartButton();
+
+        })
+        .catch(error => {
+            console.error(error);
+            loadingOverlay.style.display = "none";
+            alert(
+                "Unable to connect to the screening server. " +
+                "Please make sure the Flask application is running."
+            );
+            startBtn.disabled = false;
+            startBtn.innerHTML = "🧠 Start AI Screening";
+            updateStartButton();
+        });
+    }
+
+
+    // =========================================================
+    // INIT
+    // =========================================================
+
+    prefillCandidate();
+
+</script>
+
+</body>
+</html>
