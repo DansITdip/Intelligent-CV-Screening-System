@@ -1,45 +1,33 @@
 import os
 
 # =========================================================
-# APPLICATION CONFIGURATION
-# INTELLIGENT CV SCREENING AND JOB MATCHING SYSTEM
-# =========================================================
-
-# ---------------------------------------------------------
 # BASE DIRECTORY
-# ---------------------------------------------------------
+# =========================================================
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
-# ---------------------------------------------------------
-# FLASK CONFIGURATION
-# ---------------------------------------------------------
+# =========================================================
+# APPLICATION CONFIGURATION
+# =========================================================
 
-SECRET_KEY = "intelligent-cv-screening-secret-key-2026"
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "intelligent-cv-screening-secret-key-2026"
+)
 
-DEBUG = True
-
-
-# ---------------------------------------------------------
-# APPLICATION INFORMATION
-# ---------------------------------------------------------
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 APP_NAME = "Intelligent CV Screening System"
-
 APP_VERSION = "1.0.0"
-
 ORGANIZATION_NAME = "AI Recruitment Intelligence"
 
 
-# ---------------------------------------------------------
+# =========================================================
 # FILE UPLOAD CONFIGURATION
-# ---------------------------------------------------------
+# =========================================================
 
-UPLOAD_FOLDER = os.path.join(
-    BASE_DIR,
-    "uploads"
-)
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 
 MAX_CONTENT_LENGTH = 10 * 1024 * 1024
 
@@ -49,58 +37,73 @@ ALLOWED_EXTENSIONS = {
 }
 
 
-# ---------------------------------------------------------
+# =========================================================
 # DATABASE CONFIGURATION
-# ---------------------------------------------------------
+# =========================================================
+# Local computer:
+#     Uses XAMPP/MySQL localhost by default.
+#
+# Render:
+#     Uses the environment variables configured in Render.
+# =========================================================
 
-DB_HOST = "localhost"
+DB_HOST = os.environ.get(
+    "DB_HOST",
+    "localhost"
+)
 
-DB_PORT = 3306
+DB_PORT = int(
+    os.environ.get(
+        "DB_PORT",
+        "3306"
+    )
+)
 
-DB_NAME = "cv_screening_system"
+DB_NAME = os.environ.get(
+    "DB_NAME",
+    "cv_screening_system"
+)
 
-DB_USER = "root"
+DB_USER = os.environ.get(
+    "DB_USER",
+    "root"
+)
 
-DB_PASSWORD = ""
-
-
-# ---------------------------------------------------------
-# AI MATCHING WEIGHTS
-# ---------------------------------------------------------
-
-TECHNICAL_SKILLS_WEIGHT = 40
-
-WORK_EXPERIENCE_WEIGHT = 25
-
-EDUCATION_WEIGHT = 15
-
-JOB_RELEVANCE_WEIGHT = 20
-
-
-# ---------------------------------------------------------
-# AI ENGINE SETTINGS
-# ---------------------------------------------------------
-
-AUTO_SKILL_EXTRACTION = True
-
-AUTO_CANDIDATE_SCORING = True
-
-AI_RECOMMENDATION = True
-
-
-# ---------------------------------------------------------
-# DIRECTORY SETUP
-# ---------------------------------------------------------
-
-os.makedirs(
-    UPLOAD_FOLDER,
-    exist_ok=True
+DB_PASSWORD = os.environ.get(
+    "DB_PASSWORD",
+    ""
 )
 
 
-# ---------------------------------------------------------
-# CONFIGURATION TEST
-# ---------------------------------------------------------
+# =========================================================
+# AI MATCHING WEIGHTS
+# =========================================================
+
+TECHNICAL_SKILLS_WEIGHT = 40
+WORK_EXPERIENCE_WEIGHT = 25
+EDUCATION_WEIGHT = 15
+JOB_RELEVANCE_WEIGHT = 20
+
+
+# =========================================================
+# AI FEATURES
+# =========================================================
+
+AUTO_SKILL_EXTRACTION = True
+AUTO_CANDIDATE_SCORING = True
+AI_RECOMMENDATION = True
+
+
+# =========================================================
+# CREATE REQUIRED DIRECTORIES
+# =========================================================
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+# =========================================================
+# CONFIGURATION INFORMATION
+# =========================================================
 
 if __name__ == "__main__":
 
@@ -115,6 +118,7 @@ if __name__ == "__main__":
     print()
     print("Database Configuration")
     print("-" * 60)
+
     print(f"Host             : {DB_HOST}")
     print(f"Port             : {DB_PORT}")
     print(f"Database         : {DB_NAME}")
@@ -123,6 +127,7 @@ if __name__ == "__main__":
     print()
     print("AI Matching Weights")
     print("-" * 60)
+
     print(f"Technical Skills : {TECHNICAL_SKILLS_WEIGHT}%")
     print(f"Experience       : {WORK_EXPERIENCE_WEIGHT}%")
     print(f"Education        : {EDUCATION_WEIGHT}%")
